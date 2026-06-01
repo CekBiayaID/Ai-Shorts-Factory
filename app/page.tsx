@@ -300,7 +300,7 @@ const filteredHistory = history.filter(
       : 'text-gray-600 mb-4'
   }
 >
-  Generate Hook, Script, CTA, Thumbnail & Hashtag dalam 1 klik.
+  Create Viral Content for Youtube,Shorts,& TikTok in Seconds.
 </p>
 
 
