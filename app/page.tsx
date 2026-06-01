@@ -24,6 +24,7 @@ export default function HomePage() {
 const [darkMode, setDarkMode] = useState(true);
 const [search, setSearch] = useState('');
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [controller, setController] = useState<AbortController | null>(null);
   const [dailyLimit, setDailyLimit] = useState(5);
   const [usedToday, setUsedToday] = useState(0);
 
@@ -104,6 +105,12 @@ useEffect(() => {
   );
 }, [input]);
 
+const stopGenerating = () => {
+  controller?.abort();
+  setLoading(false);
+  setOutput("Generation stopped.");
+}
+
   const generate = async () => {
     if (loading) return;
     if (!input.trim()) return;
@@ -112,8 +119,8 @@ useEffect(() => {
   localStorage.getItem("usedToday") || 0
 );
 
-if (usedToday >= 5) {
-  alert("Limit harian tercapai");
+if (usedToday >= 0) {
+  alert("Daily Limit Reached");
   return;
 }
 
@@ -121,7 +128,10 @@ if (usedToday >= 5) {
     setOutput('Generating AI Content...');
 
     try {
-      const response = await fetch('/api/rewrite', {
+      const abortController = new AbortController();
+setController(abortController);
+      const response = await fetch("/api/rewrite", {
+  signal: abortController.signal,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,11 +143,12 @@ if (usedToday >= 5) {
       });
 
       const data = await response.json();
+console.log(data);
 
-      const hasil =
-        data?.hasil || 'Tidak ada hasil';
+      const results =
+  data?.hasil || 'No Results';
 
-      setOutput(hasil);
+      setOutput(results);
 
       const usedToday = Number(
   localStorage.getItem("usedToday") || 0
@@ -154,22 +165,28 @@ setUsedToday(usedToday + 1);
         {
           tool,
           topic: input,
-          result: hasil,
+          result: results,
           createdAt: new Date().toLocaleString(),
         },
         ...prev,
       ]);
-    } catch (error) {
-      console.error(error);
-      setOutput('Terjadi error');
-    }
+   } catch (error: any) {
+
+  if (error?.name === "AbortError") {
+    setOutput("Generation stopped.");
+    return;
+  }
+
+  console.error(error);
+  setOutput("An error occurred");
+}
 
     setLoading(false);
   };
 
   const copyResult = async () => {
     await navigator.clipboard.writeText(output);
-    alert('Berhasil dicopy');
+    alert('Success copied');
   };
 
   const downloadPdf = () => {
@@ -237,7 +254,7 @@ const clearOutput = () => {
 };
 
   const clearHistory = () => {
-    if (!confirm('Hapus semua history?')) return;
+    if (!confirm('Delete All History?')) return;
 
     setHistory([]);
     localStorage.removeItem('history');
@@ -569,8 +586,23 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
   disabled={usedToday >= dailyLimit || loading}
   className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold"
 >
-  {loading ? "Generating..." : "Generate"}
+  {
+  loading
+    ? "Generating..."
+    : usedToday >= dailyLimit
+    ? "Daily Limit Reached"
+    : "Generate"
+}
 </button>
+
+{loading && (
+  <button
+    onClick={stopGenerating}
+    className="bg-red-600 text-white px-6 py-3 rounded-xl font-bold"
+  >
+    Stop
+  </button>
+)}
 
           <button
   onClick={clearInput}
