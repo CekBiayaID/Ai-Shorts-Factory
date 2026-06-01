@@ -348,7 +348,7 @@ const filteredHistory = history.filter(
   onClick={() => setTool('script')}
   className={`px-4 py-2 rounded-xl text-white transition-all ${
   tool === 'script'
-  ? 'bg-white text-blue-600 scale-125 ring-4 ring-blue-400 font-bold'
+  ? 'bg-blue-500 scale-110 shadow-lg shadow-blue-500/50'
   : 'bg-blue-600'
 }`}
 >
