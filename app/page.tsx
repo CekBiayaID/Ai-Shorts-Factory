@@ -138,26 +138,6 @@ useEffect(() => {
 
   const pdf = new jsPDF();
 
-  const downloadDocx = async () => {
-  if (!output) return;
-
-  const doc = new Document({
-    sections: [
-      {
-        children: [
-          new Paragraph('AI Shorts Factory'),
-          new Paragraph(''),
-          new Paragraph(output),
-        ],
-      },
-    ],
-  });
-
-  const blob = await Packer.toBlob(doc);
-
-  saveAs(blob, 'hasil-ai.docx');
-};
-
   pdf.setFontSize(16);
   pdf.text('AI Shorts Factory', 10, 10);
 
@@ -299,56 +279,88 @@ const filteredHistory = history.filter(
 
           <button
   onClick={() => setTool('all')}
-  className="bg-red-600 text-white px-4 py-2 rounded-xl"
+  className={`px-4 py-2 rounded-xl text-white transition-all ${
+  tool === 'all'
+    ? 'bg-red-500 scale-110 shadow-lg shadow-red-500/50'
+    : 'bg-red-600'
+}`}
 >
   Generate All
 </button>
 
 <button
   onClick={() => setTool('script')}
-  className="bg-blue-600 text-white px-4 py-2 rounded-xl"
+  className={`px-4 py-2 rounded-xl text-white transition-all ${
+  tool === 'script'
+  ? 'bg-white text-blue-600 scale-125 ring-4 ring-blue-400 font-bold'
+  : 'bg-blue-600 text-white'
+}`}
 >
   Script
 </button>
 
 <button
-            onClick={() => setTool('title')}
-            className="bg-green-600 text-white px-4 py-2 rounded-xl"
-          >
-            Title
-          </button>
+  onClick={() => setTool('title')}
+  className={`px-4 py-2 rounded-xl text-white transition-all ${
+    tool === 'title'
+      ? 'bg-green-500 scale-110 shadow-lg shadow-green-500/50'
+      : 'bg-green-600'
+  }`}
+>
+  Title
+</button>
 
           <button
             onClick={() => setTool('description')}
-            className="bg-purple-600 text-white px-4 py-2 rounded-xl"
+            className={`px-4 py-2 rounded-xl text-white transition-all ${
+  tool === 'description'
+    ? 'bg-purple-500 scale-110 shadow-lg shadow-purple-500/50'
+    : 'bg-purple-600'
+}`}
           >
             Description
           </button>
 
           <button
             onClick={() => setTool('hashtags')}
-            className="bg-orange-600 text-white px-4 py-2 rounded-xl"
+            className={`px-4 py-2 rounded-xl text-white transition-all ${
+  tool === 'hashtags'
+    ? 'bg-orange-500 scale-110 shadow-lg shadow-orange-500/50'
+    : 'bg-orange-600'
+}`}
           >
             Hashtags
           </button>
 
           <button
   onClick={() => setTool('shorts')}
-  className="bg-indigo-600 text-white px-4 py-2 rounded-xl"
+  className={`px-4 py-2 rounded-xl text-white transition-all ${
+  tool === 'shorts'
+    ? 'bg-indigo-500 scale-110 shadow-lg shadow-indigo-500/50'
+    : 'bg-indigo-600'
+}`}
 >
   Shorts
 </button>
 
 <button
   onClick={() => setTool('tiktok')}
-  className="bg-pink-600 text-white px-4 py-2 rounded-xl"
+  className={`px-4 py-2 rounded-xl text-white transition-all ${
+  tool === 'tiktok'
+    ? 'bg-pink-500 scale-110 shadow-lg shadow-pink-500/50'
+    : 'bg-pink-600'
+}`}
 >
   TikTok
 </button>
 
 <button
   onClick={() => setTool('blog')}
-  className="bg-cyan-600 text-white px-4 py-2 rounded-xl"
+  className={`px-4 py-2 rounded-xl text-white transition-all ${
+  tool === 'blog'
+    ? 'bg-cyan-500 scale-110 shadow-lg shadow-cyan-500/50'
+    : 'bg-cyan-600'
+}`}
 >
   Blog
 </button>
@@ -359,9 +371,12 @@ const filteredHistory = history.filter(
 
           <textarea
             value={input}
-            onChange={(e) =>
-              setInput(e.target.value)
-            }
+            maxLength={500}
+            onChange={(e) => {
+  if (e.target.value.length <= 500) {
+    setInput(e.target.value);
+  }
+}}
             placeholder="Masukkan topik..."
             className={
   darkMode
