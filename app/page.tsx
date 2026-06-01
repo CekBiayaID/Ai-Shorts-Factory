@@ -384,6 +384,17 @@ const filteredHistory = history.filter(
     : 'w-full h-[320px] border-2 border-gray-300 rounded-xl p-4 text-black'
 }
           />
+
+<div
+  className={
+    darkMode
+      ? 'text-gray-400 text-sm mt-2'
+      : 'text-gray-600 text-sm mt-2'
+  }
+>
+  {input.length}/500 karakter
+</div>
+
           <div>
         {loading ? (
   <div className="w-full h-[320px] flex items-center justify-center">
