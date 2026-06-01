@@ -305,7 +305,7 @@ const filteredHistory = history.filter(
 
 
         <h2 className="text-lg text-red-500 font-bold mb-4">
-          Tool Aktif: {tool.toUpperCase()}
+          Active Tool: {tool.toUpperCase()}
           <button
   onClick={() => setDarkMode(!darkMode)}
   className="ml-4 mb-4 bg-gray-700 text-white px-4 py-2 rounded-xl"
@@ -416,7 +416,7 @@ const filteredHistory = history.filter(
     setInput(e.target.value);
   }
 }}
-            placeholder="Masukkan topik..."
+            placeholder="Enter Topic..."
             className={
   darkMode
     ? 'w-full h-[320px] bg-gray-800 border border-gray-700 rounded-xl p-4 text-white'
@@ -435,7 +435,7 @@ const filteredHistory = history.filter(
 
   <br />
 
-  Sisa Generate: {dailyLimit - usedToday}
+  Generations Left: {dailyLimit - usedToday}
 </div>
 
 </div>
@@ -466,11 +466,11 @@ const filteredHistory = history.filter(
       : 'text-gray-600 text-sm mt-2'
   }
 >
-  Kata: {wordCount}
+  Words: {wordCount}
 {' | '}
-Karakter: {charCount}
+Character: {charCount}
 {' | '}
-Estimasi: {estimatedMinutes}m {estimatedSeconds}s
+Read Time: {estimatedMinutes}m {estimatedSeconds}s
 </div>
 </div>
     <div className={
@@ -502,7 +502,7 @@ Estimasi: {estimatedMinutes}m {estimatedSeconds}s
 
 <input
   type="text"
-  placeholder="Cari history..."
+  placeholder="Search History..."
   value={search}
   onChange={(e) => setSearch(e.target.value)}
   className={
@@ -516,7 +516,7 @@ Estimasi: {estimatedMinutes}m {estimatedSeconds}s
 
               {filteredHistory.length === 0 && (
                 <p className="text-gray-500">
-                  Belum ada history
+                  No History Yet
                 </p>
               )}
 
