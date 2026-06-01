@@ -112,7 +112,7 @@ useEffect(() => {
   localStorage.getItem("usedToday") || 0
 );
 
-if (usedToday >= 20) {
+if (usedToday >= 5) {
   alert("Limit harian tercapai");
   return;
 }
@@ -435,7 +435,7 @@ const filteredHistory = history.filter(
 
   <br />
 
-  Generations Left: {dailyLimit - usedToday}
+  Generations Left: {Math.max(0, dailyLimit - usedToday)}
 </div>
 
 </div>
@@ -495,7 +495,7 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
                 onClick={clearHistory}
                 className="bg-red-500 text-white px-3 py-1 rounded"
               >
-                Hapus
+                Erase
               </button>
 
             </div>
@@ -565,19 +565,12 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
         <div className="flex flex-wrap gap-4 mt-6">
 
           <button
-            onClick={generate}
-            disabled={loading}
-            className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold"
-          >
-            {loading ? (
-  <div className="flex items-center gap-2">
-    <div className="animate-spin h-4 w-4 rounded-full border-2 border-white border-t-transparent"></div>
-    <span>Generating...</span>
-  </div>
-) : (
-  'Generate'
-)}
-          </button>
+  onClick={generate}
+  disabled={usedToday >= dailyLimit || loading}
+  className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold"
+>
+  {loading ? "Generating..." : "Generate"}
+</button>
 
           <button
   onClick={clearInput}
