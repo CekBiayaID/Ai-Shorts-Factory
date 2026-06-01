@@ -1,0 +1,544 @@
+'use client';
+
+import { jsPDF } from 'jspdf';
+import {
+  Document,
+  Packer,
+  Paragraph
+} from 'docx';
+import { saveAs } from 'file-saver';
+import { useEffect, useState } from 'react';
+
+type HistoryItem = {
+  tool: string;
+  topic: string;
+  result: string;
+  createdAt: string;
+};
+
+export default function HomePage() {
+  const [tool, setTool] = useState('all');
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [loading, setLoading] = useState(false);
+const [darkMode, setDarkMode] = useState(true);
+const [search, setSearch] = useState('');
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+
+  useEffect(() => {
+    try {
+      const savedHistory = localStorage.getItem('history');
+
+      if (!savedHistory) return;
+
+      const parsed = JSON.parse(savedHistory);
+
+      if (
+        Array.isArray(parsed) &&
+        parsed.length > 0 &&
+        typeof parsed[0] === 'object'
+      ) {
+        setHistory(parsed);
+      } else {
+        localStorage.removeItem('history');
+      }
+    } catch {
+      localStorage.removeItem('history');
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(
+      'history',
+      JSON.stringify(history)
+    );
+  }, [history]);
+
+  useEffect(() => {
+  const savedOutput =
+    localStorage.getItem('lastOutput');
+
+  if (savedOutput) {
+    setOutput(savedOutput);
+  }
+}, []);
+
+useEffect(() => {
+  localStorage.setItem(
+    'lastOutput',
+    output
+  );
+}, [output]);
+
+  useEffect(() => {
+  const savedInput =
+    localStorage.getItem('lastInput');
+
+  if (savedInput) {
+    setInput(savedInput);
+  }
+}, []);
+
+useEffect(() => {
+  localStorage.setItem(
+    'lastInput',
+    input
+  );
+}, [input]);
+
+  const generate = async () => {
+    if (!input.trim()) return;
+
+    setLoading(true);
+    setOutput('Generating...');
+
+    try {
+      const response = await fetch('/api/rewrite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          topic: input,
+          tool,
+        }),
+      });
+
+      const data = await response.json();
+
+      const hasil =
+        data?.hasil || 'Tidak ada hasil';
+
+      setOutput(hasil);
+
+      setHistory((prev) => [
+        {
+          tool,
+          topic: input,
+          result: hasil,
+          createdAt: new Date().toLocaleString(),
+        },
+        ...prev,
+      ]);
+    } catch (error) {
+      console.error(error);
+      setOutput('Terjadi error');
+    }
+
+    setLoading(false);
+  };
+
+  const copyResult = async () => {
+    await navigator.clipboard.writeText(output);
+    alert('Berhasil dicopy');
+  };
+
+  const downloadPdf = () => {
+  if (!output) return;
+
+  const pdf = new jsPDF();
+
+  const downloadDocx = async () => {
+  if (!output) return;
+
+  const doc = new Document({
+    sections: [
+      {
+        children: [
+          new Paragraph('AI Shorts Factory'),
+          new Paragraph(''),
+          new Paragraph(output),
+        ],
+      },
+    ],
+  });
+
+  const blob = await Packer.toBlob(doc);
+
+  saveAs(blob, 'hasil-ai.docx');
+};
+
+  pdf.setFontSize(16);
+  pdf.text('AI Shorts Factory', 10, 10);
+
+  pdf.setFontSize(11);
+
+  const lines = pdf.splitTextToSize(
+    output,
+    180
+  );
+
+  pdf.text(lines, 10, 20);
+
+  pdf.save('hasil-ai.pdf');
+};
+  
+const downloadTxt = () => {
+    const blob = new Blob([output], {
+      type: 'text/plain;charset=utf-8',
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'hasil-ai.txt';
+    a.click();
+
+    URL.revokeObjectURL(url);
+  };
+
+  const downloadDocx = async () => {
+  if (!output) return;
+
+  const doc = new Document({
+    sections: [
+      {
+        children: [
+          new Paragraph('AI Shorts Factory'),
+          new Paragraph(''),
+          new Paragraph(output),
+        ],
+      },
+    ],
+  });
+
+  const blob = await Packer.toBlob(doc);
+
+  saveAs(blob, 'hasil-ai.docx');
+};
+
+const clearInput = () => {
+  setInput('');
+};
+
+const clearOutput = () => {
+  setOutput('');
+  localStorage.removeItem('lastOutput');
+};
+
+  const clearHistory = () => {
+    if (!confirm('Hapus semua history?')) return;
+
+    setHistory([]);
+    localStorage.removeItem('history');
+  };
+
+const deleteHistoryItem = (
+  indexToDelete: number
+) => {
+  setHistory(
+    history.filter(
+      (_, index) =>
+        index !== indexToDelete
+    )
+  );
+};
+
+  const charCount = output.length;
+
+const wordCount =
+  output.trim() === ''
+    ? 0
+    : output.trim().split(/\s+/).length;
+
+    const estimatedMinutes = Math.floor(wordCount / 150);
+
+const estimatedSeconds = Math.floor(
+  ((wordCount % 150) / 150) * 60
+);
+
+const filteredHistory = history.filter(
+  (item) =>
+    item.topic
+      .toLowerCase()
+      .includes(search.toLowerCase())
+);
+
+  return (
+    <main
+  className={
+    darkMode
+      ? 'min-h-screen bg-gray-950 p-6'
+      : 'min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6'
+  }
+>
+      <div
+  className={
+    darkMode
+      ? 'max-w-7xl mx-auto bg-gray-900 rounded-3xl shadow-xl p-6 text-white'
+      : 'max-w-7xl mx-auto bg-white rounded-3xl shadow-xl p-6'
+  }
+>
+        <h1 className="text-4xl font-bold text-indigo-400 mb-3">
+          AI Shorts Factory
+        </h1>
+
+<p
+  className={
+    darkMode
+      ? 'text-gray-400 mb-4'
+      : 'text-gray-600 mb-4'
+  }
+>
+  Generate Hook, Script, CTA, Thumbnail & Hashtag dalam 1 klik.
+</p>
+
+
+        <h2 className="text-lg text-red-500 font-bold mb-4">
+          Tool Aktif: {tool.toUpperCase()}
+          <button
+  onClick={() => setDarkMode(!darkMode)}
+  className="ml-4 mb-4 bg-gray-700 text-white px-4 py-2 rounded-xl"
+>
+  {darkMode ? '☀ Light Mode' : '🌙 Dark Mode'}
+</button>
+        </h2>
+
+        <div className="flex flex-wrap gap-3 mb-6">
+
+          <button
+  onClick={() => setTool('all')}
+  className="bg-red-600 text-white px-4 py-2 rounded-xl"
+>
+  Generate All
+</button>
+
+<button
+  onClick={() => setTool('script')}
+  className="bg-blue-600 text-white px-4 py-2 rounded-xl"
+>
+  Script
+</button>
+
+<button
+            onClick={() => setTool('title')}
+            className="bg-green-600 text-white px-4 py-2 rounded-xl"
+          >
+            Title
+          </button>
+
+          <button
+            onClick={() => setTool('description')}
+            className="bg-purple-600 text-white px-4 py-2 rounded-xl"
+          >
+            Description
+          </button>
+
+          <button
+            onClick={() => setTool('hashtags')}
+            className="bg-orange-600 text-white px-4 py-2 rounded-xl"
+          >
+            Hashtags
+          </button>
+
+          <button
+  onClick={() => setTool('shorts')}
+  className="bg-indigo-600 text-white px-4 py-2 rounded-xl"
+>
+  Shorts
+</button>
+
+<button
+  onClick={() => setTool('tiktok')}
+  className="bg-pink-600 text-white px-4 py-2 rounded-xl"
+>
+  TikTok
+</button>
+
+<button
+  onClick={() => setTool('blog')}
+  className="bg-cyan-600 text-white px-4 py-2 rounded-xl"
+>
+  Blog
+</button>
+
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-4">
+
+          <textarea
+            value={input}
+            onChange={(e) =>
+              setInput(e.target.value)
+            }
+            placeholder="Masukkan topik..."
+            className={
+  darkMode
+    ? 'w-full h-[320px] bg-gray-800 border border-gray-700 rounded-xl p-4 text-white'
+    : 'w-full h-[320px] border-2 border-gray-300 rounded-xl p-4 text-black'
+}
+          />
+          <div>
+        <textarea
+            value={output}
+            readOnly
+            className={
+  darkMode
+    ? 'w-full h-[320px] bg-gray-800 border border-gray-700 rounded-xl p-4 text-white'
+    : 'w-full h-[320px] border-2 border-gray-300 rounded-xl p-4 text-black'
+}
+          />
+          <div
+  className={
+    darkMode
+      ? 'text-gray-300 text-sm mt-2'
+      : 'text-gray-600 text-sm mt-2'
+  }
+>
+  Kata: {wordCount}
+{' | '}
+Karakter: {charCount}
+{' | '}
+Estimasi: {estimatedMinutes}m {estimatedSeconds}s
+</div>
+</div>
+    <div className={
+  darkMode
+    ? 'border border-gray-700 rounded-xl p-4 bg-gray-800'
+    : 'border-2 border-gray-300 rounded-xl p-4 bg-gray-50'
+}>
+
+            <div className="flex justify-between items-center mb-3">
+
+               <h3
+  className={
+    darkMode
+      ? 'font-bold text-white'
+      : 'font-bold text-black'
+  }
+>
+  History ({history.length})
+</h3>
+
+              <button
+                onClick={clearHistory}
+                className="bg-red-500 text-white px-3 py-1 rounded"
+              >
+                Hapus
+              </button>
+
+            </div>
+
+<input
+  type="text"
+  placeholder="Cari history..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  className={
+    darkMode
+      ? 'w-full mb-3 bg-gray-700 text-white p-2 rounded'
+      : 'w-full mb-3 border p-2 rounded'
+  }
+/>
+
+            <div className="space-y-2 max-h-[260px] overflow-auto">
+
+              {filteredHistory.length === 0 && (
+                <p className="text-gray-500">
+                  Belum ada history
+                </p>
+              )}
+
+              {filteredHistory.map((item, index) => (
+                <div
+                  key={index}
+                  onClick={() => {
+                    setOutput(item.result);
+                    setInput(item.topic);
+                    setTool(item.tool);
+                  }}
+                  className="bg-white border rounded-lg p-2 text-black text-sm cursor-pointer hover:bg-gray-100"
+                >
+                  <div className="flex justify-between">
+  <div className="font-bold">
+    {item.tool.toUpperCase()}
+  </div>
+
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      deleteHistoryItem(index);
+    }}
+    className="text-red-500 font-bold"
+  >
+    ❌
+  </button>
+</div>
+
+                  <div className="truncate">
+                    {item.topic}
+                  </div>
+
+                  <div className="text-xs text-gray-500">
+                    {item.createdAt}
+                  </div>
+                </div>
+              ))}
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div className="flex flex-wrap gap-4 mt-6">
+
+          <button
+            onClick={generate}
+            disabled={loading}
+            className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold"
+          >
+            {loading
+              ? 'Generating...'
+              : 'Generate'}
+          </button>
+
+          <button
+  onClick={clearInput}
+  className="bg-yellow-600 text-white px-6 py-3 rounded-xl font-bold"
+>
+  Clear Input
+</button>
+
+          <button
+            onClick={copyResult}
+            className="bg-green-600 text-white px-6 py-3 rounded-xl font-bold"
+          >
+            Copy Result
+          </button>
+
+<button
+  onClick={clearOutput}
+  className="bg-gray-600 text-white px-6 py-3 rounded-xl font-bold"
+>
+  Clear Output
+</button>
+
+          <button
+            onClick={downloadTxt}
+            className="bg-purple-600 text-white px-6 py-3 rounded-xl font-bold"
+          >
+            Download TXT
+          </button>
+
+<button
+  onClick={downloadDocx}
+  className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold"
+>
+  Download DOCX
+</button>
+
+<button
+  onClick={downloadPdf}
+  className="bg-red-600 text-white px-6 py-3 rounded-xl font-bold"
+>
+  Download PDF
+</button>
+
+        </div>
+
+      </div>
+    </main>
+  );
+}
