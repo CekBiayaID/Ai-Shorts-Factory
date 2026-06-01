@@ -40,6 +40,10 @@ Format:
 
     else if (tool === 'title') {
       prompt = `
+      IMPORTANT:
+Use the same language as the user's input.
+Do not translate unless requested.
+
 Buat 20 judul YouTube viral dengan CTR tinggi tentang:
 
 ${topic}
@@ -50,6 +54,10 @@ Format nomor 1-20.
 
     else if (tool === 'description') {
       prompt = `
+IMPORTANT:
+Use the same language as the user's input.
+Do not translate unless requested.
+
 Buat deskripsi SEO YouTube profesional tentang:
 
 ${topic}
@@ -60,6 +68,10 @@ Sertakan keyword utama dan CTA subscribe.
 
     else if (tool === 'hashtags') {
       prompt = `
+IMPORTANT:
+Use the same language as the user's input.
+Do not translate unless requested.
+
 Buat 30 hashtag YouTube terbaik tentang:
 
 ${topic}
@@ -70,6 +82,10 @@ Gabungkan hashtag populer dan niche.
 
     else if (tool === 'shorts') {
       prompt = `
+IMPORTANT:
+Use the same language as the user's input.
+Do not translate unless requested.
+
 Buat paket YouTube Shorts lengkap tentang:
 
 ${topic}
@@ -96,6 +112,10 @@ Format:
 
     else if (tool === 'all') {
       prompt = `
+IMPORTANT:
+Use the same language as the user's input.
+Do not translate unless requested.
+
 Buat paket konten YouTube lengkap tentang:
 
 ${topic}
@@ -128,6 +148,10 @@ Format:
 
     else if (tool === 'tiktok') {
       prompt = `
+IMPORTANT:
+Use the same language as the user's input.
+Do not translate unless requested.
+
 Buat paket konten TikTok lengkap tentang:
 
 ${topic}
@@ -150,6 +174,10 @@ Format:
 
     else if (tool === 'blog') {
       prompt = `
+IMPORTANT:
+Use the same language as the user's input.
+Do not translate unless requested.
+
 Tulis artikel SEO profesional minimal 1500 kata tentang:
 
 ${topic}
