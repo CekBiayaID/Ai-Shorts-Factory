@@ -22,19 +22,23 @@ if (topic.length > 500) {
 
     if (tool === 'script') {
       prompt = `
-Buat script YouTube profesional minimal 700 kata tentang:
+      IMPORTANT:
+Use the same language as the user's input.
+Do not translate unless requested.
+
+Create a professional Youtube script with at least 700 words about
 
 ${topic}
 
 Format:
 
-# JUDUL VIRAL
+# VIRAL TITLE
 
-# DESKRIPSI SEO
+# SEO DESCRIPTION
 
 # 15 HASHTAGS
 
-# SCRIPT LENGKAP
+# FULL SCRIPT
 `;
     }
 
@@ -44,11 +48,11 @@ Format:
 Use the same language as the user's input.
 Do not translate unless requested.
 
-Buat 20 judul YouTube viral dengan CTR tinggi tentang:
+Create 20 highly clickable Youtube titles with high CTR about:
 
 ${topic}
 
-Format nomor 1-20.
+Format number 1-20.
 `;
     }
 
@@ -58,11 +62,11 @@ IMPORTANT:
 Use the same language as the user's input.
 Do not translate unless requested.
 
-Buat deskripsi SEO YouTube profesional tentang:
+Create a professional Youtube SEO description about:
 
 ${topic}
 
-Sertakan keyword utama dan CTA subscribe.
+Include the main keyword and a strong subscribe CTA.
 `;
     }
 
@@ -72,11 +76,11 @@ IMPORTANT:
 Use the same language as the user's input.
 Do not translate unless requested.
 
-Buat 30 hashtag YouTube terbaik tentang:
+Create 30 highly relevant Youtube hastags about:
 
 ${topic}
 
-Gabungkan hashtag populer dan niche.
+Mix popular and niche hastags 
 `;
     }
 
@@ -86,25 +90,25 @@ IMPORTANT:
 Use the same language as the user's input.
 Do not translate unless requested.
 
-Buat paket YouTube Shorts lengkap tentang:
+Create a viral Youtube Shorts script about:
 
 ${topic}
 
 Format:
 
-# 20 JUDUL VIRAL
+# 20 VIRAL TITLES
 
-# 10 HOOK VIRAL
+# 10 VIRAL HOOKS
 
-# SCRIPT 30 DETIK
+# 30 SECOND SCRIPT
 
-# SCRIPT 60 DETIK
+# 60 SECOND SCRIPT
 
 # THUMBNAIL TEXT
 
-# THUMBNAIL AI PROMPT
+# AI THUMBNAIL PROMPT
 
-# CTA
+# CALL TO ACTION
 
 # 30 HASHTAGS
 `;
@@ -116,21 +120,21 @@ IMPORTANT:
 Use the same language as the user's input.
 Do not translate unless requested.
 
-Buat paket konten YouTube lengkap tentang:
+Create a complete Youtube content package about:
 
 ${topic}
 
 Format:
 
-# 20 JUDUL VIRAL
+# 20 VIRAL TITLES
 
-# 10 HOOK VIRAL
+# 10 VIRAL HOOKS
 
-# SCRIPT SHORTS 30 DETIK
+# 30 SECOND SHORTS SCRIPT
 
-# SCRIPT SHORTS 60 DETIK
+# 60 SECOND SHORTS SCRIPT
 
-# SCRIPT VIDEO 5 MENIT
+# 5 MINUTE SCRIPT VIDEO
 
 # THUMBNAIL TEXT
 
@@ -138,9 +142,9 @@ Format:
 
 # SEO KEYWORDS
 
-# DESKRIPSI SEO
+# SEO DESCRIPTION
 
-# CTA
+# CALL TO ACTION
 
 # 30 HASHTAGS
 `;
@@ -152,21 +156,21 @@ IMPORTANT:
 Use the same language as the user's input.
 Do not translate unless requested.
 
-Buat paket konten TikTok lengkap tentang:
+Create a complete TikTok content package about:
 
 ${topic}
 
 Format:
 
-# 10 HOOK VIRAL
+# 10 VIRAL HOOKS
 
-# 10 CAPTION
+# 10 CAPTIONS
 
-# SCRIPT 30 DETIK
+# 30 SECOND SCRIPT
 
-# SCRIPT 60 DETIK
+# 60 SECOND SCRIPT
 
-# CTA
+# CALL TO ACTIION
 
 # 30 HASHTAGS
 `;
@@ -178,25 +182,25 @@ IMPORTANT:
 Use the same language as the user's input.
 Do not translate unless requested.
 
-Tulis artikel SEO profesional minimal 1500 kata tentang:
+Write a professional SEO blog article with at least 1500 words about:
 
 ${topic}
 
 Format:
 
-# JUDUL SEO
+# SEO TITLE
 
 # META DESCRIPTION
 
-# PENDAHULUAN
+# INTRODUCTION
 
-# H2
+# H2 SECTIONS
 
-# H3
+# H3 SUBSECTIONS
 
 # FAQ
 
-# KESIMPULAN
+# CONSLUSION
 `;
     }
 
@@ -214,14 +218,17 @@ Format:
             {
               role: 'system',
               content: `
-Kamu adalah AI Content Creator Professional.
+You are a professional AI Content Creator.
 
-Tugas:
-- Buat konten berkualitas tinggi.
-- Hindari jawaban pendek.
-- Gunakan bahasa yang natural.
-- Fokus pada engagement dan SEO.
-- Berikan output yang rapi.
+CRITICAL RULE:
+Always respond in the exact language used by the user.
+If the user writes in English, respond entirely in English.
+If the user writes in Indonesian, respond entirely in Indonesian.
+Never translate unless explicitly requested.
+
+Create high-quality, engaging, SEO-optimized content.
+Avoid short answers.
+Keep outputs professional and well-structured.
 `,
             },
             {
