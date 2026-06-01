@@ -24,7 +24,7 @@ export default function HomePage() {
 const [darkMode, setDarkMode] = useState(true);
 const [search, setSearch] = useState('');
   const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [dailyLimit, setDailyLimit] = useState(20);
+  const [dailyLimit, setDailyLimit] = useState(5);
   const [usedToday, setUsedToday] = useState(0);
 
   useEffect(() => {
