@@ -90,7 +90,7 @@ useEffect(() => {
     if (!input.trim()) return;
 
     setLoading(true);
-    setOutput('Generating...');
+    setOutput('Generating AI Content...');
 
     try {
       const response = await fetch('/api/rewrite', {
@@ -370,15 +370,24 @@ const filteredHistory = history.filter(
 }
           />
           <div>
-        <textarea
-            value={output}
-            readOnly
-            className={
-  darkMode
-    ? 'w-full h-[320px] bg-gray-800 border border-gray-700 rounded-xl p-4 text-white'
-    : 'w-full h-[320px] border-2 border-gray-300 rounded-xl p-4 text-black'
-}
-          />
+        {loading ? (
+  <div className="w-full h-[320px] flex items-center justify-center">
+    <div className="flex flex-col items-center gap-3">
+      <div className="animate-spin h-10 w-10 rounded-full border-4 border-blue-500 border-t-transparent"></div>
+      <span>Generating AI Content...</span>
+    </div>
+  </div>
+) : (
+  <textarea
+    value={output}
+    readOnly
+    className={
+      darkMode
+        ? 'w-full h-[320px] bg-gray-800 border border-gray-700 rounded-xl p-4 text-white'
+        : 'w-full h-[320px] border-2 border-gray-300 rounded-xl p-4 text-black'
+    }
+  />
+)}
           <div
   className={
     darkMode
@@ -489,9 +498,14 @@ Estimasi: {estimatedMinutes}m {estimatedSeconds}s
             disabled={loading}
             className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold"
           >
-            {loading
-              ? 'Generating...'
-              : 'Generate'}
+            {loading ? (
+  <div className="flex items-center gap-2">
+    <div className="animate-spin h-4 w-4 rounded-full border-2 border-white border-t-transparent"></div>
+    <span>Generating...</span>
+  </div>
+) : (
+  'Generate'
+)}
           </button>
 
           <button
