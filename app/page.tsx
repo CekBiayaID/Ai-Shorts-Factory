@@ -24,6 +24,8 @@ export default function HomePage() {
 const [darkMode, setDarkMode] = useState(true);
 const [search, setSearch] = useState('');
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [dailyLimit, setDailyLimit] = useState(20);
+  const [usedToday, setUsedToday] = useState(0);
 
   useEffect(() => {
     try {
@@ -46,6 +48,22 @@ const [search, setSearch] = useState('');
       localStorage.removeItem('history');
     }
   }, []);
+
+  useEffect(() => {
+  const used = Number(localStorage.getItem("usedToday") || 0);
+  setUsedToday(used);
+}, []);
+
+useEffect(() => {
+  const today = new Date().toDateString();
+  const lastDate = localStorage.getItem("lastDate");
+
+  if (lastDate !== today) {
+    localStorage.setItem("lastDate", today);
+    localStorage.setItem("usedToday", "0");
+    setUsedToday(0);
+  }
+}, []);
 
   useEffect(() => {
     localStorage.setItem(
@@ -87,7 +105,17 @@ useEffect(() => {
 }, [input]);
 
   const generate = async () => {
+    if (loading) return;
     if (!input.trim()) return;
+
+    const usedToday = Number(
+  localStorage.getItem("usedToday") || 0
+);
+
+if (usedToday >= 20) {
+  alert("Limit harian tercapai");
+  return;
+}
 
     setLoading(true);
     setOutput('Generating AI Content...');
@@ -110,6 +138,17 @@ useEffect(() => {
         data?.hasil || 'Tidak ada hasil';
 
       setOutput(hasil);
+
+      const usedToday = Number(
+  localStorage.getItem("usedToday") || 0
+);
+
+localStorage.setItem(
+  "usedToday",
+  String(usedToday + 1)
+);
+
+setUsedToday(usedToday + 1);
 
       setHistory((prev) => [
         {
@@ -368,7 +407,7 @@ const filteredHistory = history.filter(
         </div>
 
         <div className="grid lg:grid-cols-3 gap-4">
-
+<div>
           <textarea
             value={input}
             maxLength={500}
@@ -393,6 +432,12 @@ const filteredHistory = history.filter(
   }
 >
   {input.length}/500 karakter
+
+  <br />
+
+  Sisa Generate: {dailyLimit - usedToday}
+</div>
+
 </div>
 
           <div>

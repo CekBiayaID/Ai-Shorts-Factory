@@ -4,6 +4,20 @@ export async function POST(request: Request) {
   try {
     const { topic, tool } = await request.json();
 
+    if (!topic || topic.trim().length === 0) {
+  return NextResponse.json(
+    { error: "Topik tidak boleh kosong" },
+    { status: 400 }
+  );
+}
+
+if (topic.length > 500) {
+  return NextResponse.json(
+    { error: "Maksimal 500 karakter" },
+    { status: 400 }
+  );
+}
+
     let prompt = '';
 
     if (tool === 'script') {
@@ -188,7 +202,7 @@ Tugas:
             },
           ],
           temperature: 0.8,
-          max_tokens: 4000,
+          max_tokens: 1000,
         }),
       }
     );
