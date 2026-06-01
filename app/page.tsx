@@ -25,7 +25,7 @@ const [darkMode, setDarkMode] = useState(true);
 const [search, setSearch] = useState('');
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [controller, setController] = useState<AbortController | null>(null);
-  const [dailyLimit, setDailyLimit] = useState(0);
+  const [dailyLimit, setDailyLimit] = useState(5);
   const [usedToday, setUsedToday] = useState(0);
 
   useEffect(() => {
@@ -119,7 +119,7 @@ const stopGenerating = () => {
   localStorage.getItem("usedToday") || 0
 );
 
-if (usedToday >= 0) {
+if (usedToday >= dailyLimit) {
   alert("Daily Limit Reached");
   return;
 }
