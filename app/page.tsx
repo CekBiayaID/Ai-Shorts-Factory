@@ -25,7 +25,7 @@ const [darkMode, setDarkMode] = useState(true);
 const [search, setSearch] = useState('');
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [controller, setController] = useState<AbortController | null>(null);
-  const [dailyLimit, setDailyLimit] = useState(5);
+  const [dailyLimit, setDailyLimit] = useState(0);
   const [usedToday, setUsedToday] = useState(0);
 
   useEffect(() => {
@@ -419,6 +419,17 @@ const filteredHistory = history.filter(
 }`}
 >
   Blog
+</button>
+
+<button
+  onClick={() => setTool('thumbnail')}
+  className={`px-4 py-2 rounded-xl text-white transition-all ${
+  tool === 'thumbnail'
+    ? 'bg-yellow-500 scale-110 shadow-lg shadow-yellow-500/50'
+    : 'bg-yellow-600'
+}`}
+>
+    Thumbnail AI
 </button>
 
         </div>

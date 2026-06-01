@@ -6,14 +6,14 @@ export async function POST(request: Request) {
 
     if (!topic || topic.trim().length === 0) {
   return NextResponse.json(
-    { error: "Topik tidak boleh kosong" },
+    { error: "Topic Cannot Be Empty" },
     { status: 400 }
   );
 }
 
 if (topic.length > 500) {
   return NextResponse.json(
-    { error: "Maksimal 500 karakter" },
+    { error: "Maximum 500 Characters Allowed" },
     { status: 400 }
   );
 }
@@ -204,6 +204,28 @@ Format:
 `;
     }
 
+    else if (tool === 'thumbnail') {
+  prompt = `
+  IMPORTANT:
+Use the same language as the user's input.
+Do not translate unless requested.
+
+Create 10 viral YouTube thumbnail prompts for:
+
+${topic}
+
+Each prompt must include:
+- Main subject
+- Facial expression
+- Background
+- Lighting
+- Colors
+- Thumbnail text
+
+Make them highly clickable.
+`;
+}
+
     const response = await fetch(
       'https://openrouter.ai/api/v1/chat/completions',
       {
@@ -253,7 +275,7 @@ Keep outputs professional and well-structured.
     return NextResponse.json({
       hasil:
         data.choices?.[0]?.message?.content ||
-        'Tidak ada hasil',
+        'No Results',
     });
 
   } catch (error: any) {
