@@ -349,7 +349,7 @@ const filteredHistory = history.filter(
   className={`px-4 py-2 rounded-xl text-white transition-all ${
   tool === 'script'
   ? 'bg-white text-blue-600 scale-125 ring-4 ring-blue-400 font-bold'
-  : 'bg-blue-600 text-white'
+  : 'bg-blue-600'
 }`}
 >
   Script
