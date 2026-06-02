@@ -3,20 +3,30 @@
 export default function PricingPage() {
   async function bayar() {
     try {
+      console.log("START PAYMENT");
+
       const res = await fetch("/api/midtrans", {
         method: "POST",
       });
 
+      console.log("STATUS:", res.status);
+
       const data = await res.json();
+
+      console.log("MIDTRANS RESPONSE:", data);
 
       if (data.redirect_url) {
         window.location.href = data.redirect_url;
-      } else {
-        alert("Failed to create transaction");
-        console.log(data);
+        return;
       }
+
+      alert(
+        data.details ||
+        data.error ||
+        "Failed to create transaction"
+      );
     } catch (err) {
-      console.error(err);
+      console.error("PAYMENT ERROR:", err);
       alert("An error occurred");
     }
   }
@@ -41,7 +51,9 @@ export default function PricingPage() {
       <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
 
         <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
-          <h2 className="text-2xl font-bold">Free</h2>
+          <h2 className="text-2xl font-bold">
+            Free
+          </h2>
 
           <p className="text-5xl font-bold mt-4">
             $0
@@ -62,7 +74,9 @@ export default function PricingPage() {
         </div>
 
         <div className="bg-blue-600 p-6 rounded-xl border border-blue-400">
-          <h2 className="text-2xl font-bold">Pro</h2>
+          <h2 className="text-2xl font-bold">
+            Pro
+          </h2>
 
           <p className="text-5xl font-bold mt-4">
             $5
