@@ -324,16 +324,27 @@ const filteredHistory = history.filter(
 </p>
 
 
-        <h2 className="text-lg text-red-500 font-bold mb-4">
-          Active Tool: {tool.toUpperCase()}
-          <button
-  onClick={() => setDarkMode(!darkMode)}
-  className="ml-4 mb-4 bg-gray-700 text-white px-4 py-2 rounded-xl"
->
-  {darkMode ? '☀ Light Mode' : '🌙 Dark Mode'}
-</button>
-        </h2>
+ <div className="flex items-center gap-3 mb-4">
 
+  <h2 className="text-lg text-red-500 font-bold">
+    Active Tool: {tool.toUpperCase()}
+  </h2>
+
+  <button
+    onClick={() => setDarkMode(!darkMode)}
+    className="bg-gray-700 text-white px-4 py-2 rounded-xl"
+  >
+    {darkMode ? "☀ Light Mode" : "🌙 Dark Mode"}
+  </button>
+
+  <button
+    onClick={() => router.push("/pricing")}
+    className="bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded-xl font-bold"
+  >
+    🚀 Upgrade
+  </button>
+
+</div>
         <div className="flex flex-wrap gap-3 mb-6">
 
           <button
@@ -439,6 +450,37 @@ const filteredHistory = history.filter(
 
         <div className="grid lg:grid-cols-3 gap-4">
 <div>
+
+  <div className="flex flex-wrap gap-2 mb-3">
+    <button
+      onClick={() => setInput("10 Cute And Surprising Cat And Dog Facts")}
+      className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
+    >
+      🐱🐶 Cat & Dog Facts
+    </button>
+
+    <button
+      onClick={() => setInput("Best AI Tools 2026")}
+      className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
+    >
+      🤖 AI Tools
+    </button>
+
+    <button
+      onClick={() => setInput("Top Side Hustles")}
+      className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
+    >
+      💰 Side Hustles
+    </button>
+
+    <button
+      onClick={() => setInput("Strange Facts About Space")}
+      className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
+    >
+      🚀 Space Facts
+    </button>
+  </div>
+
           <textarea
             value={input}
             maxLength={500}
@@ -471,7 +513,7 @@ const filteredHistory = history.filter(
 
 </div>
 
-          <div>
+          <div className="mt-20">
         {loading ? (
   <div className="w-full h-[320px] flex items-center justify-center">
     <div className="flex flex-col items-center gap-3">
@@ -539,7 +581,7 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
   className={
     darkMode
       ? 'w-full mb-3 bg-gray-700 text-white p-2 rounded'
-      : 'w-full mb-3 border p-2 rounded'
+      : 'w-full mb-3 border p-2 rounded text-black placeholder-gray-500'
   }
 />
 
@@ -607,16 +649,6 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
     : "Generate"}
 </button>
 
-<button
-  onClick={() => {
-    console.log("UPGRADE CLICK");
-    router.push("/pricing");
-  }}
-  className="bg-yellow-500 text-black px-6 py-3 rounded-xl font-bold"
->
-  Upgrade
-</button>
-
 {loading && (
   <button
     onClick={stopGenerating}
@@ -655,17 +687,19 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
           </button>
 
 <button
-  onClick={downloadDocx}
+  onClick={() => router.push("/pricing")}
   className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold"
 >
-  Download DOCX
+  🔒 Download DOCX
+  
 </button>
 
 <button
-  onClick={downloadPdf}
+  onClick={() => router.push("/pricing")}
   className="bg-red-600 text-white px-6 py-3 rounded-xl font-bold"
 >
-  Download PDF
+  🔒 Download PDF
+  
 </button>
 
         </div>
