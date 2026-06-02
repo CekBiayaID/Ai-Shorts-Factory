@@ -6,54 +6,54 @@ export async function GET() {
     status: "OK",
     message: "Midtrans API hidup",
     serverKeyExists: !!process.env.MIDTRANS_SERVER_KEY,
+    serverKeyLength:
+      process.env.MIDTRANS_SERVER_KEY?.length || 0,
   });
 }
 
 export async function POST() {
   try {
-    // Debug env
-    if (!process.env.MIDTRANS_SERVER_KEY) {
-      return NextResponse.json(
-        {
-          error: "MIDTRANS_SERVER_KEY not found",
-        },
-        {
-          status: 500,
-        }
-      );
-    }
+    console.log(
+      "MIDTRANS KEY:",
+      process.env.MIDTRANS_SERVER_KEY
+        ? "EXISTS"
+        : "MISSING"
+    );
 
     const snap = new midtransClient.Snap({
-      isProduction: false, // Sandbox dulu untuk testing
-      serverKey: process.env.MIDTRANS_SERVER_KEY,
+      isProduction: true,
+      serverKey: process.env.MIDTRANS_SERVER_KEY!,
     });
 
-    const parameter = {
-      transaction_details: {
-        order_id: `ORDER-${Date.now()}`,
-        gross_amount: 75000,
-      },
-      customer_details: {
-        first_name: "Customer",
-        email: "customer@example.com",
-      },
-    };
-
-    const transaction = await snap.createTransaction(parameter);
+    const transaction =
+      await snap.createTransaction({
+        transaction_details: {
+          order_id:
+            "ORDER-" + Date.now(),
+          gross_amount: 75000,
+        },
+      });
 
     return NextResponse.json({
-      success: true,
       token: transaction.token,
-      redirect_url: transaction.redirect_url,
+      redirect_url:
+        transaction.redirect_url,
     });
   } catch (error: any) {
-    console.error("MIDTRANS ERROR:", error);
+    console.error(
+      "MIDTRANS FULL ERROR:",
+      error
+    );
 
     return NextResponse.json(
       {
-        success: false,
-        error: error?.message || "Unknown error",
-        raw: error,
+        error: true,
+        message:
+          error?.message ||
+          "Unknown Error",
+        details:
+          error?.ApiResponse ||
+          error,
       },
       {
         status: 500,
