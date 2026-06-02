@@ -8,6 +8,7 @@ import {
 } from 'docx';
 import { saveAs } from 'file-saver';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 type HistoryItem = {
   tool: string;
@@ -17,6 +18,7 @@ type HistoryItem = {
 };
 
 export default function HomePage() {
+  const router = useRouter();
   const [tool, setTool] = useState('all');
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
@@ -120,7 +122,8 @@ const stopGenerating = () => {
 );
 
 if (usedToday >= dailyLimit) {
-  alert("Daily Limit Reached");
+  alert("Daily Limit Reached. Upgrade to Pro for unlimited generations.");
+  router.push("/pricing");
   return;
 }
 
@@ -592,18 +595,26 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
 
         <div className="flex flex-wrap gap-4 mt-6">
 
-          <button
+  <button
   onClick={generate}
   disabled={usedToday >= dailyLimit || loading}
   className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold"
 >
-  {
-  loading
+  {loading
     ? "Generating..."
     : usedToday >= dailyLimit
     ? "Daily Limit Reached"
-    : "Generate"
-}
+    : "Generate"}
+</button>
+
+<button
+  onClick={() => {
+    console.log("UPGRADE CLICK");
+    router.push("/pricing");
+  }}
+  className="bg-yellow-500 text-black px-6 py-3 rounded-xl font-bold"
+>
+  Upgrade
 </button>
 
 {loading && (
