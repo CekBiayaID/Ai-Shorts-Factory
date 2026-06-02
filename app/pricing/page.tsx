@@ -3,6 +3,14 @@
 export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
+
+<button
+  onClick={() => history.back()}
+  className="mb-6 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg"
+>
+  ← Back
+</button>
+
       <h1 className="text-5xl font-bold text-center mb-4">
         Choose Your Plan
       </h1>
