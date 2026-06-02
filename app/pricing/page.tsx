@@ -1,27 +1,45 @@
 "use client";
 
 export default function PricingPage() {
+  async function bayar() {
+    try {
+      const res = await fetch("/api/midtrans", {
+        method: "POST",
+      });
+
+      const data = await res.json();
+
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+      } else {
+        alert("Failed to create transaction");
+        console.log(data);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("An error occurred");
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
-
-<button
-  onClick={() => history.back()}
-  className="mb-6 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg"
->
-  ← Back
-</button>
+      <button
+        onClick={() => history.back()}
+        className="mb-6 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg"
+      >
+        ← Back
+      </button>
 
       <h1 className="text-5xl font-bold text-center mb-4">
         Choose Your Plan
       </h1>
 
       <p className="text-center text-gray-400 mb-12">
-        Create viral content faster with AI-powered tools.
+        Unlock more AI generations and premium features.
       </p>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
 
-        {/* Free */}
         <div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
           <h2 className="text-2xl font-bold">Free</h2>
 
@@ -34,61 +52,39 @@ export default function PricingPage() {
           </p>
 
           <ul className="mt-6 space-y-3">
-            <li>✓ 5 Generations / Day</li>
+            <li>✓ 5 Generations Per Day</li>
             <li>✓ Basic AI Tools</li>
           </ul>
 
           <button className="w-full mt-8 bg-gray-700 hover:bg-gray-600 py-3 rounded-lg font-semibold">
-            Get Started
+            Current Plan
           </button>
         </div>
 
-        {/* Pro */}
         <div className="bg-blue-600 p-6 rounded-xl border border-blue-400">
           <h2 className="text-2xl font-bold">Pro</h2>
 
           <p className="text-5xl font-bold mt-4">
-            $4.99
+            $5
           </p>
 
           <p className="mt-2">
-            per month
+            Per Month
           </p>
 
           <ul className="mt-6 space-y-3">
-            <li>✓ 100 Generations / Day</li>
+            <li>✓ 100 Generations Per Day</li>
             <li>✓ PDF Export</li>
             <li>✓ DOCX Export</li>
             <li>✓ Priority Support</li>
+            <li>✓ Monthly Subscription</li>
           </ul>
 
-          <button className="w-full mt-8 bg-white text-blue-700 hover:bg-gray-200 py-3 rounded-lg font-semibold">
+          <button
+            onClick={bayar}
+            className="w-full mt-8 bg-white text-blue-700 hover:bg-gray-200 py-3 rounded-lg font-semibold"
+          >
             Upgrade to Pro
-          </button>
-        </div>
-
-        {/* Unlimited */}
-        <div className="bg-yellow-400 text-black p-6 rounded-xl border border-yellow-300">
-          <h2 className="text-2xl font-bold">Unlimited</h2>
-
-          <p className="text-5xl font-bold mt-4">
-            $9.99
-          </p>
-
-          <p className="mt-2">
-            per month
-          </p>
-
-          <ul className="mt-6 space-y-3">
-            <li>✓ Unlimited Generations</li>
-            <li>✓ All Premium Features</li>
-            <li>✓ PDF Export</li>
-            <li>✓ DOCX Export</li>
-            <li>✓ Priority Support</li>
-          </ul>
-
-          <button className="w-full mt-8 bg-black text-white hover:bg-gray-800 py-3 rounded-lg font-semibold">
-            Go Unlimited
           </button>
         </div>
 

@@ -170,7 +170,7 @@ Format:
 
 # 60 SECOND SCRIPT
 
-# CALL TO ACTIION
+# CALL TO ACTION
 
 # 30 HASHTAGS
 `;
@@ -200,7 +200,7 @@ Format:
 
 # FAQ
 
-# CONSLUSION
+# CONCLUSION
 `;
     }
 

@@ -1,72 +1,138 @@
 'use client';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+const router = useRouter();
 
-  const masuk = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    // Palsu dulu biar langsung masuk
-    localStorage.setItem('user', email);
-    router.push('/dashboard');
-    setLoading(false);
-  };
+const [email, setEmail] = useState('');
+const [password, setPassword] = useState('');
+const [loading, setLoading] = useState(false);
 
-  const daftar = async () => {
-    if (!email || !password) return alert('Isi Email & Sandi dulu!');
-    setLoading(true);
-    // Palsu dulu biar langsung sukses
-    alert('✅ Berhasil Daftar! Silakan Masuk.');
-    setLoading(false);
-  };
+const signIn = async (e: React.FormEvent) => {
+e.preventDefault();
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Masuk / Daftar Akun</h2>
-        <form onSubmit={masuk} className="space-y-4">
-          <div>
-            <label className="block text-gray-800 mb-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-gray-800 mb-1">Kata Sandi</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
-          >
-            {loading ? 'Memproses...' : 'Masuk Sekarang'}
-          </button>
-        </form>
-        <div className="text-center mt-4">
-          <p className="text-gray-800 text-sm">
-            Belum punya akun?{' '}
-            <button onClick={daftar} disabled={loading} className="text-indigo-600 hover:underline font-medium">
-              Daftar Baru
-            </button>
-          </p>
-        </div>
+if (!email || !password) {
+  alert('Please enter your email and password.');
+  return;
+}
+
+setLoading(true);
+
+const { error } = await supabase.auth.signInWithPassword({
+  email,
+  password,
+});
+
+setLoading(false);
+
+if (error) {
+  alert('❌ Incorrect email or password');
+  return;
+}
+
+const {
+  data: { session },
+} = await supabase.auth.getSession();
+
+console.log('SESSION:', session);
+
+router.push('/');
+
+};
+
+const signUp = async () => {
+if (!email || !password) {
+alert('Please enter your email and password.');
+return;
+}
+
+setLoading(true);
+
+const { error } = await supabase.auth.signUp({
+  email,
+  password,
+});
+
+setLoading(false);
+
+if (error) {
+  alert('❌ Unable to create account');
+  console.error(error);
+  return;
+}
+
+alert('✅ Account created successfully! Please check your email.');
+
+};
+
+return (
+<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+<div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+<h2 className="text-2xl font-bold text-center text-gray-800 mb-2">
+AI Shorts Factory
+</h2>
+
+    <p className="text-center text-gray-500 mb-6">
+      Sign In or Create an Account
+    </p>
+
+    <form onSubmit={signIn} className="space-y-4">
+      <div>
+        <label className="block text-gray-800 mb-1">
+          Email Address
+        </label>
+
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800"
+          required
+        />
       </div>
+
+      <div>
+        <label className="block text-gray-800 mb-1">
+          Password
+        </label>
+
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter your password"
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800"
+          required
+        />
+      </div>
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
+      >
+        {loading ? 'Please Wait...' : 'Sign In'}
+      </button>
+    </form>
+
+    <div className="text-center mt-5">
+      <p className="text-gray-800 text-sm">
+        Don't have an account?{' '}
+        <button
+          onClick={signUp}
+          disabled={loading}
+          className="text-indigo-600 hover:underline font-medium"
+        >
+          Sign Up
+        </button>
+      </p>
     </div>
-  );
+  </div>
+</div>
+
+);
 }

@@ -9,6 +9,8 @@ import {
 import { saveAs } from 'file-saver';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase'
+import { resumeToPipeableStream } from 'react-dom/server';
 
 type HistoryItem = {
   tool: string;
@@ -19,6 +21,8 @@ type HistoryItem = {
 
 export default function HomePage() {
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [plan, setPlan] = useState('free')
   const [tool, setTool] = useState('all');
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
@@ -29,6 +33,34 @@ const [search, setSearch] = useState('');
   const [controller, setController] = useState<AbortController | null>(null);
   const [dailyLimit, setDailyLimit] = useState(5);
   const [usedToday, setUsedToday] = useState(0);
+
+  useEffect(() => {
+  supabase.auth.getSession().then(async ({ data }) => {
+    setIsLoggedIn(!!data.session);
+
+    if (data.session?.user) {
+     const result = await supabase
+  .from("profiles")
+  .select("*")
+  .eq("id", data.session.user.id)
+  .single();
+
+console.log("PROFILE RESULT:", result);
+
+const profile = result.data;
+
+      if (profile) {
+        setPlan(profile.plan);
+
+        if (profile.plan === 'pro') {
+          setDailyLimit(999999);
+        } else {
+          setDailyLimit(5);
+        }
+      }
+    }
+  });
+}, []);
 
   useEffect(() => {
     try {
@@ -114,6 +146,12 @@ const stopGenerating = () => {
 }
 
   const generate = async () => {
+    if (!isLoggedIn) {
+    alert("Please login first");
+    router.push("/login");
+    return;
+  }
+
     if (loading) return;
     if (!input.trim()) return;
 
@@ -309,9 +347,45 @@ const filteredHistory = history.filter(
       : 'max-w-7xl mx-auto bg-white rounded-3xl shadow-xl p-6'
   }
 >
-        <h1 className="text-4xl font-bold text-indigo-400 mb-3">
-          AI Shorts Factory
-        </h1>
+       <div className="flex justify-between items-center mb-3">
+  <h1 className="text-4xl font-bold text-indigo-400">
+    AI Shorts Factory
+  </h1>
+
+  <p className="text-green-400 font-bold">
+  Plan: {plan.toUpperCase()}
+</p>
+
+  {isLoggedIn ? (
+    <button
+      onClick={async () => {
+        console.log('LOGOUT CLICKED')
+        await supabase.auth.signOut();
+        setIsLoggedIn(false);
+        router.push('/');
+      }}
+      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-bold"
+    >
+      Logout
+    </button>
+  ) : (
+    <div className="flex gap-3">
+      <button
+        onClick={() => router.push('/login')}
+        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl font-bold"
+      >
+        Login
+      </button>
+
+      <button
+        onClick={() => router.push('/login')}
+        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl font-bold"
+      >
+        Sign Up
+      </button>
+    </div>
+  )}
+</div>
 
 <p
   className={
@@ -639,14 +713,18 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
 
   <button
   onClick={generate}
-  disabled={usedToday >= dailyLimit || loading}
+  disabled={!isLoggedIn || usedToday >= dailyLimit || loading}
   className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold"
 >
-  {loading
+  {
+    !isLoggedIn
+    ? "Login Required"
+    : loading
     ? "Generating..."
     : usedToday >= dailyLimit
     ? "Daily Limit Reached"
-    : "Generate"}
+    : "Generate"
+  }
 </button>
 
 {loading && (
