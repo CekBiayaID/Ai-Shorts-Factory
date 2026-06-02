@@ -765,19 +765,35 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
           </button>
 
 <button
-  onClick={() => router.push("/pricing")}
+  onClick={() => {
+    if (plan !== "pro") {
+      router.push("/pricing");
+      return;
+    }
+
+    downloadDocx();
+  }}
   className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold"
 >
-  🔒 Download DOCX
-  
+  {plan === "pro"
+    ? "Download DOCX"
+    : "🔒 Download DOCX"}
 </button>
 
 <button
-  onClick={() => router.push("/pricing")}
+  onClick={() => {
+    if (plan !== "pro") {
+      router.push("/pricing");
+      return;
+    }
+
+    downloadPdf();
+  }}
   className="bg-red-600 text-white px-6 py-3 rounded-xl font-bold"
 >
-  🔒 Download PDF
-  
+  {plan === "pro"
+    ? "Download PDF"
+    : "🔒 Download PDF"}
 </button>
 
         </div>
