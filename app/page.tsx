@@ -10,7 +10,6 @@ import { saveAs } from 'file-saver';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase'
-import { resumeToPipeableStream } from 'react-dom/server';
 
 type HistoryItem = {
   tool: string;
@@ -39,21 +38,26 @@ const [search, setSearch] = useState('');
     setIsLoggedIn(!!data.session);
 
     if (data.session?.user) {
+      console.log("LOGIN EMAIL:", data.session.user.email);
+      console.log("LOGIN USER:", data.session.user);
+
      const result = await supabase
   .from("profiles")
   .select("*")
-  .eq("id", data.session.user.id)
-  .single();
+  .eq("email", data.session.user.email)
+  
+  console.log(result.data);
 
-console.log("PROFILE RESULT:", result);
-
-const profile = result.data;
+const profile = result.data?.[0];
+console.log("SESSION ID:", data.session.user.id);
+console.log("QUERY RESULTS:", result.data);
+console.log("PROFILE ERROR:", result.error);
 
       if (profile) {
         setPlan(profile.plan);
 
         if (profile.plan === 'pro') {
-          setDailyLimit(999999);
+          setDailyLimit(100);
         } else {
           setDailyLimit(5);
         }
@@ -171,17 +175,25 @@ if (usedToday >= dailyLimit) {
     try {
       const abortController = new AbortController();
 setController(abortController);
-      const response = await fetch("/api/rewrite", {
+      const session = await supabase.auth.getSession();
+
+      console.log(
+  "USER ID:",
+  session.data.session?.user.id
+);
+
+const response = await fetch("/api/rewrite", {
   signal: abortController.signal,
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          topic: input,
-          tool,
-        }),
-      });
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    topic: input,
+    tool,
+    userId: session.data.session?.user.id,
+  }),
+});
 
       const data = await response.json();
 console.log(data);

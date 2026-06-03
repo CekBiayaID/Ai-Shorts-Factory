@@ -1,9 +1,51 @@
 import { NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
 
 export async function POST(request: Request) {
   try {
-    const { topic, tool } = await request.json();
+    const {
+      topic,
+      tool,
+      userId
+    } = await request.json();
+    console.log("USER ID FROM FRONTEND", userId);
 
+const profileResult = await supabase
+  .from("profiles")
+  .select("*")
+  .eq("id", userId)
+  .single();
+
+const profile = profileResult.data;
+
+if (!profile) {
+  return NextResponse.json(
+    {
+      hasil: "User profile not found"
+    },
+    {
+      status: 404
+    }
+  );
+}
+
+const limit =
+  profile.plan === "pro"
+    ? 100
+    : 5;
+
+if (profile.daily_used >= limit) {
+  return NextResponse.json(
+    {
+      hasil:
+        "Daily limit reached. Upgrade to Pro."
+    },
+    {
+      status: 403
+    }
+  );
+}
+    
     if (!topic || topic.trim().length === 0) {
   return NextResponse.json(
     { error: "Topic Cannot Be Empty" },
