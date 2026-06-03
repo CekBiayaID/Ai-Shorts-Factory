@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function POST(request: Request) {
   try {
@@ -8,23 +8,26 @@ export async function POST(request: Request) {
       tool,
       userId
     } = await request.json();
-    console.log("USER ID FROM FRONTEND", userId);
 
-const profileResult = await supabase
+    console.log("USER ID =", userId);
+
+const profileResult = await supabaseAdmin
   .from("profiles")
   .select("*")
   .eq("id", userId)
   .single();
 
+console.log(profileResult.data);
+
 const profile = profileResult.data;
 
 if (!profile) {
+  console.log("PROFILE NULL");
+  console.log(profileResult);
+
   return NextResponse.json(
     {
-      hasil: "User profile not found"
-    },
-    {
-      status: 404
+      hasil: JSON.stringify(profileResult)
     }
   );
 }

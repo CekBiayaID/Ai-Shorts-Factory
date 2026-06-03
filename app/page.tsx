@@ -32,6 +32,7 @@ const [search, setSearch] = useState('');
   const [controller, setController] = useState<AbortController | null>(null);
   const [dailyLimit, setDailyLimit] = useState(5);
   const [usedToday, setUsedToday] = useState(0);
+  const [expiresAt, setExpiresAt] = useState("")
 
   useEffect(() => {
   supabase.auth.getSession().then(async ({ data }) => {
@@ -54,7 +55,8 @@ console.log("QUERY RESULTS:", result.data);
 console.log("PROFILE ERROR:", result.error);
 
       if (profile) {
-        setPlan(profile.plan);
+        setPlan(profile.plan?.toUpperCase() || 'FREE');
+        setExpiresAt(profile.expires_at || "")
 
         if (profile.plan === 'pro') {
           setDailyLimit(100);
@@ -163,8 +165,8 @@ const stopGenerating = () => {
   localStorage.getItem("usedToday") || 0
 );
 
-if (usedToday >= dailyLimit) {
-  alert("Daily Limit Reached. Upgrade to Pro for unlimited generations.");
+if (plan !== "PRO" && usedToday >= dailyLimit) {
+  alert("Daily Limit Reached. Upgrade to Pro...");
   router.push("/pricing");
   return;
 }
@@ -191,7 +193,7 @@ const response = await fetch("/api/rewrite", {
   body: JSON.stringify({
     topic: input,
     tool,
-    userId: session.data.session?.user.id,
+    userId: session.data.session?.user.id
   }),
 });
 
@@ -364,9 +366,26 @@ const filteredHistory = history.filter(
     AI Shorts Factory
   </h1>
 
-  <p className="text-green-400 font-bold">
-  Plan: {plan.toUpperCase()}
-</p>
+  {plan?.toUpperCase() === "PRO" ? (
+  <div className="bg-green-500/10 border border-green-500 rounded-xl px-3 py-1">
+    <div className="text-green-400 font-bold">
+      ⭐ PRO ACTIVE
+    </div>
+
+    {expiresAt && (
+      <div className="text-yellow-300 text-xs">
+        {Math.ceil(
+          (new Date(expiresAt).getTime() - Date.now()) /
+          (1000 * 60 * 60 * 24)
+        )} Days Left
+      </div>
+    )}
+  </div>
+) : (
+  <div className="text-gray-400 font-bold">
+    FREE
+  </div>
+)}
 
   {isLoggedIn ? (
     <button
@@ -423,12 +442,14 @@ const filteredHistory = history.filter(
     {darkMode ? "☀ Light Mode" : "🌙 Dark Mode"}
   </button>
 
+  {plan !== 'PRO' && (
   <button
-    onClick={() => router.push("/pricing")}
+    onClick={() => router.push('/pricing')}
     className="bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded-xl font-bold"
   >
     🚀 Upgrade
   </button>
+)}
 
 </div>
         <div className="flex flex-wrap gap-3 mb-6">
@@ -778,7 +799,7 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
 
 <button
   onClick={() => {
-    if (plan !== "pro") {
+    if (plan !== "PRO") {
       router.push("/pricing");
       return;
     }
@@ -787,14 +808,14 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
   }}
   className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold"
 >
-  {plan === "pro"
+  {plan === "PRO"
     ? "Download DOCX"
     : "🔒 Download DOCX"}
 </button>
 
 <button
   onClick={() => {
-    if (plan !== "pro") {
+    if (plan !== "PRO") {
       router.push("/pricing");
       return;
     }
@@ -803,7 +824,7 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
   }}
   className="bg-red-600 text-white px-6 py-3 rounded-xl font-bold"
 >
-  {plan === "pro"
+  {plan === "PRO"
     ? "Download PDF"
     : "🔒 Download PDF"}
 </button>

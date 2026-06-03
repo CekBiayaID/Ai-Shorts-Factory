@@ -9,6 +9,7 @@ const router = useRouter();
 
 const [email, setEmail] = useState('');
 const [password, setPassword] = useState('');
+const [showPassword, setShowPassword] = useState(false);
 const [loading, setLoading] = useState(false);
 
 const signIn = async (e: React.FormEvent) => {
@@ -104,13 +105,21 @@ AI Shorts Factory
         </label>
 
         <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Enter your password"
           className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800"
           required
         />
+        <button
+  type="button"
+  onClick={() => setShowPassword(!showPassword)}
+  className="text-gray-800 font-medium mt-1"
+>
+  {showPassword ? "👁️‍🗨️ Hide Password" : "👁️ Show Password"}
+</button>
+
       </div>
 
       <button
