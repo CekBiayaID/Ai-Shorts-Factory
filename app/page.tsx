@@ -829,6 +829,14 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
     : "🔒 Download PDF"}
 </button>
 
+      </div>
+
+        <div className="text-center mt-10 text-gray-500">
+          <a href="/privacy">Privacy</a>
+          {" | "}
+          <a href="/terms">Terms</a>
+          {" | "}
+          <a href="/contact">Contact</a>
         </div>
 
       </div>
