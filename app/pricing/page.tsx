@@ -16,7 +16,7 @@ export default function PricingPage() {
       console.log("MIDTRANS RESPONSE:", data);
 
       if (data.redirect_url) {
-        window.location.href = data.redirect_url;
+        window.open(data.redirect_url, "_blank");
         return;
       }
 
@@ -95,11 +95,22 @@ export default function PricingPage() {
           </ul>
 
           <button
-            onClick={bayar}
-            className="w-full mt-8 bg-white text-blue-700 hover:bg-gray-200 py-3 rounded-lg font-semibold"
-          >
-            Upgrade to Pro
-          </button>
+  onClick={bayar}
+  className="w-full mt-8 bg-green-600 hover:bg-green-700 py-3 rounded-lg font-semibold"
+>
+  Pay via (QRIS/E-Wallet)
+</button>
+
+<button
+  onClick={() =>
+    window.open(
+      "https://indopanjayautama.lemonsqueezy.com/checkout/buy/f90ccb6a-a556-41b0-97f0-1ce21ae19984"
+    )
+  }
+  className="w-full mt-3 bg-white text-blue-700 hover:bg-gray-200 py-3 rounded-lg font-semibold"
+>
+  Pay Global (Card/PayPal)
+</button>
         </div>
 
       </div>
