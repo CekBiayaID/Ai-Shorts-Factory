@@ -12,7 +12,6 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase'
 
 type HistoryItem = {
-  tool: string;
   topic: string;
   result: string;
   createdAt: string;
@@ -22,7 +21,6 @@ export default function HomePage() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [plan, setPlan] = useState('free')
-  const [tool, setTool] = useState('all');
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -172,7 +170,7 @@ if (plan !== "PRO" && usedToday >= dailyLimit) {
 }
 
     setLoading(true);
-    setOutput('Generating AI Content...');
+    setOutput('Repurposing Content...');
 
     try {
       const abortController = new AbortController();
@@ -192,7 +190,6 @@ const response = await fetch("/api/rewrite", {
   },
   body: JSON.stringify({
     topic: input,
-    tool,
     userId: session.data.session?.user.id
   }),
 });
@@ -233,7 +230,6 @@ if (
 
       setHistory((prev) => [
         {
-          tool,
           topic: input,
           result: results,
           createdAt: new Date().toLocaleString(),
@@ -265,7 +261,7 @@ if (
   const pdf = new jsPDF();
 
   pdf.setFontSize(16);
-  pdf.text('AI Shorts Factory', 10, 10);
+  pdf.text('AI Content Repurposer', 10, 10);
 
   pdf.setFontSize(11);
 
@@ -301,7 +297,7 @@ const downloadTxt = () => {
     sections: [
       {
         children: [
-          new Paragraph('AI Shorts Factory'),
+          new Paragraph('AI Content Repurposer'),
           new Paragraph(''),
           new Paragraph(output),
         ],
@@ -378,10 +374,10 @@ const filteredHistory = history.filter(
 >
        <div className="flex justify-between items-center mb-3">
   <h1 className="text-4xl font-bold text-indigo-400">
-    AI Shorts Factory
+    AI Content Repurposer
   </h1>
 
-  {plan?.toUpperCase() === "PRO" ? (
+  {plan?.toUpperCase() === "PRO" && (
   <div className="bg-green-500/10 border border-green-500 rounded-xl px-3 py-1">
     <div className="text-green-400 font-bold">
       ⭐ PRO ACTIVE
@@ -396,11 +392,7 @@ const filteredHistory = history.filter(
       </div>
     )}
   </div>
-) : (
-  <div className="text-gray-400 font-bold">
-    FREE
-  </div>
-)}
+  )}
 
   {isLoggedIn ? (
     <button
@@ -440,15 +432,11 @@ const filteredHistory = history.filter(
       : 'text-gray-600 mb-4'
   }
 >
-  Create Viral Content for Youtube,Shorts,& TikTok in Seconds.
+  Turn Videos, Blogs, Podcasts And Posts Into New Content With AI.
 </p>
 
 
  <div className="flex items-center gap-3 mb-4">
-
-  <h2 className="text-lg text-red-500 font-bold">
-    Active Tool: {tool.toUpperCase()}
-  </h2>
 
   <button
     onClick={() => setDarkMode(!darkMode)}
@@ -462,145 +450,44 @@ const filteredHistory = history.filter(
     onClick={() => router.push('/pricing')}
     className="bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded-xl font-bold"
   >
-    🚀 Upgrade
+    🚀 Upgrade To PRO
   </button>
 )}
 
 </div>
-        <div className="flex flex-wrap gap-3 mb-6">
-
-          <button
-  onClick={() => setTool('all')}
-  className={`px-4 py-2 rounded-xl text-white transition-all ${
-  tool === 'all'
-    ? 'bg-red-500 scale-110 shadow-lg shadow-red-500/50'
-    : 'bg-red-600'
-}`}
->
-  Generate All
-</button>
-
-<button
-  onClick={() => setTool('script')}
-  className={`px-4 py-2 rounded-xl text-white transition-all ${
-  tool === 'script'
-  ? 'bg-blue-500 scale-110 shadow-lg shadow-blue-500/50'
-  : 'bg-blue-600'
-}`}
->
-  Script
-</button>
-
-<button
-  onClick={() => setTool('title')}
-  className={`px-4 py-2 rounded-xl text-white transition-all ${
-    tool === 'title'
-      ? 'bg-green-500 scale-110 shadow-lg shadow-green-500/50'
-      : 'bg-green-600'
-  }`}
->
-  Title
-</button>
-
-          <button
-            onClick={() => setTool('description')}
-            className={`px-4 py-2 rounded-xl text-white transition-all ${
-  tool === 'description'
-    ? 'bg-purple-500 scale-110 shadow-lg shadow-purple-500/50'
-    : 'bg-purple-600'
-}`}
-          >
-            Description
-          </button>
-
-          <button
-            onClick={() => setTool('hashtags')}
-            className={`px-4 py-2 rounded-xl text-white transition-all ${
-  tool === 'hashtags'
-    ? 'bg-orange-500 scale-110 shadow-lg shadow-orange-500/50'
-    : 'bg-orange-600'
-}`}
-          >
-            Hashtags
-          </button>
-
-          <button
-  onClick={() => setTool('shorts')}
-  className={`px-4 py-2 rounded-xl text-white transition-all ${
-  tool === 'shorts'
-    ? 'bg-indigo-500 scale-110 shadow-lg shadow-indigo-500/50'
-    : 'bg-indigo-600'
-}`}
->
-  Shorts
-</button>
-
-<button
-  onClick={() => setTool('tiktok')}
-  className={`px-4 py-2 rounded-xl text-white transition-all ${
-  tool === 'tiktok'
-    ? 'bg-pink-500 scale-110 shadow-lg shadow-pink-500/50'
-    : 'bg-pink-600'
-}`}
->
-  TikTok
-</button>
-
-<button
-  onClick={() => setTool('blog')}
-  className={`px-4 py-2 rounded-xl text-white transition-all ${
-  tool === 'blog'
-    ? 'bg-cyan-500 scale-110 shadow-lg shadow-cyan-500/50'
-    : 'bg-cyan-600'
-}`}
->
-  Blog
-</button>
-
-<button
-  onClick={() => setTool('thumbnail')}
-  className={`px-4 py-2 rounded-xl text-white transition-all ${
-  tool === 'thumbnail'
-    ? 'bg-yellow-500 scale-110 shadow-lg shadow-yellow-500/50'
-    : 'bg-yellow-600'
-}`}
->
-    Thumbnail AI
-</button>
-
-        </div>
 
         <div className="grid lg:grid-cols-3 gap-4">
 <div>
 
   <div className="flex flex-wrap gap-2 mb-3">
-    <button
-      onClick={() => setInput("10 Cute And Surprising Cat And Dog Facts")}
-      className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
-    >
-      🐱🐶 Cat & Dog Facts
-    </button>
 
-    <button
-      onClick={() => setInput("Best AI Tools 2026")}
-      className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
-    >
-      🤖 AI Tools
-    </button>
+      <button
+  onClick={() => setInput("YouTube video transcript about AI productivity tools")}
+  className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
+>
+  🎥 YouTube Video
+</button>
 
-    <button
-      onClick={() => setInput("Top Side Hustles")}
-      className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
-    >
-      💰 Side Hustles
-    </button>
+<button
+  onClick={() => setInput("Blog article about personal finance and saving money")}
+  className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
+>
+  📝 Blog Article
+</button>
 
-    <button
-      onClick={() => setInput("Strange Facts About Space")}
-      className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
-    >
-      🚀 Space Facts
-    </button>
+<button
+  onClick={() => setInput("Podcast episode discussing startup growth strategies")}
+  className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
+>
+  🎙 Podcast
+</button>
+
+<button
+  onClick={() => setInput("Twitter thread about passive income ideas")}
+  className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
+>
+  🐦 Social Post
+</button>
   </div>
 
           <textarea
@@ -611,7 +498,7 @@ const filteredHistory = history.filter(
     setInput(e.target.value);
   }
 }}
-            placeholder="Enter Topic..."
+            placeholder="Paste any content here..."
             className={
   darkMode
     ? 'w-full h-[320px] bg-gray-800 border border-gray-700 rounded-xl p-4 text-white'
@@ -721,14 +608,13 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
                   onClick={() => {
                     setOutput(item.result);
                     setInput(item.topic);
-                    setTool(item.tool);
                   }}
                   className="bg-white border rounded-lg p-2 text-black text-sm cursor-pointer hover:bg-gray-100"
                 >
                   <div className="flex justify-between">
   <div className="font-bold">
-    {item.tool.toUpperCase()}
-  </div>
+  REPURPOSE
+</div>
 
   <button
     onClick={(e) => {
@@ -771,7 +657,7 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
     ? "Generating..."
     : usedToday >= dailyLimit
     ? "Daily Limit Reached"
-    : "Generate"
+    : "Repurpose Content"
   }
 </button>
 

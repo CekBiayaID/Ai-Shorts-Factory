@@ -5,7 +5,6 @@ export async function POST(request: Request) {
   try {
     const {
       topic,
-      tool,
       userId
     } = await request.json();
 
@@ -63,213 +62,67 @@ if (topic.length > 500) {
   );
 }
 
-    let prompt = '';
-
-    if (tool === 'script') {
-      prompt = `
-      IMPORTANT:
+let prompt = `
+IMPORTANT:
 Use the same language as the user's input.
 Do not translate unless requested.
 
-Create a professional Youtube script with at least 700 words about
+You are an AI Content Repurposing Expert.
+
+Repurpose the following content/topic into a complete short-form content package:
 
 ${topic}
 
-Format:
+Format exactly:
 
-# VIRAL TITLE
+# VIRAL TITLES
+
+Create 10 highly clickable YouTube titles.
+
+# VIRAL HOOKS
+
+Create 10 attention-grabbing hooks.
 
 # SEO DESCRIPTION
 
-# 15 HASHTAGS
+Create 1 SEO optimized description.
 
-# FULL SCRIPT
-`;
-    }
+# YOUTUBE SHORTS SCRIPT
 
-    else if (tool === 'title') {
-      prompt = `
-      IMPORTANT:
-Use the same language as the user's input.
-Do not translate unless requested.
+Create a complete 30-60 second YouTube Shorts script.
 
-Create 20 highly clickable Youtube titles with high CTR about:
+# TIKTOK SCRIPT
 
-${topic}
+Create a complete viral TikTok version.
 
-Format number 1-20.
-`;
-    }
+# INSTAGRAM CAPTION
 
-    else if (tool === 'description') {
-      prompt = `
-IMPORTANT:
-Use the same language as the user's input.
-Do not translate unless requested.
+Create an engaging Instagram caption.
 
-Create a professional Youtube SEO description about:
+# X THREAD
 
-${topic}
+Create a Twitter/X thread.
 
-Include the main keyword and a strong subscribe CTA.
-`;
-    }
+# LINKEDIN POST
 
-    else if (tool === 'hashtags') {
-      prompt = `
-IMPORTANT:
-Use the same language as the user's input.
-Do not translate unless requested.
+Create a professional LinkedIn post.
 
-Create 30 highly relevant Youtube hastags about:
+# THUMBNAIL IDEAS
 
-${topic}
-
-Mix popular and niche hastags 
-`;
-    }
-
-    else if (tool === 'shorts') {
-      prompt = `
-IMPORTANT:
-Use the same language as the user's input.
-Do not translate unless requested.
-
-Create a viral Youtube Shorts script about:
-
-${topic}
-
-Format:
-
-# 20 VIRAL TITLES
-
-# 10 VIRAL HOOKS
-
-# 30 SECOND SCRIPT
-
-# 60 SECOND SCRIPT
-
-# THUMBNAIL TEXT
-
-# AI THUMBNAIL PROMPT
+Create 10 thumbnail ideas.
 
 # CALL TO ACTION
 
-# 30 HASHTAGS
+Create 5 strong CTAs.
+
+# HASHTAGS
+
+Create 30 relevant hashtags.
+
+# CONTENT IDEAS
+
+Create 10 additional content ideas based on this topic.
 `;
-    }
-
-    else if (tool === 'all') {
-      prompt = `
-IMPORTANT:
-Use the same language as the user's input.
-Do not translate unless requested.
-
-Create a complete Youtube content package about:
-
-${topic}
-
-Format:
-
-# 20 VIRAL TITLES
-
-# 10 VIRAL HOOKS
-
-# 30 SECOND SHORTS SCRIPT
-
-# 60 SECOND SHORTS SCRIPT
-
-# 5 MINUTE SCRIPT VIDEO
-
-# THUMBNAIL TEXT
-
-# THUMBNAIL AI PROMPT
-
-# SEO KEYWORDS
-
-# SEO DESCRIPTION
-
-# CALL TO ACTION
-
-# 30 HASHTAGS
-`;
-    }
-
-    else if (tool === 'tiktok') {
-      prompt = `
-IMPORTANT:
-Use the same language as the user's input.
-Do not translate unless requested.
-
-Create a complete TikTok content package about:
-
-${topic}
-
-Format:
-
-# 10 VIRAL HOOKS
-
-# 10 CAPTIONS
-
-# 30 SECOND SCRIPT
-
-# 60 SECOND SCRIPT
-
-# CALL TO ACTION
-
-# 30 HASHTAGS
-`;
-    }
-
-    else if (tool === 'blog') {
-      prompt = `
-IMPORTANT:
-Use the same language as the user's input.
-Do not translate unless requested.
-
-Write a professional SEO blog article with at least 1500 words about:
-
-${topic}
-
-Format:
-
-# SEO TITLE
-
-# META DESCRIPTION
-
-# INTRODUCTION
-
-# H2 SECTIONS
-
-# H3 SUBSECTIONS
-
-# FAQ
-
-# CONCLUSION
-`;
-    }
-
-    else if (tool === 'thumbnail') {
-  prompt = `
-  IMPORTANT:
-Use the same language as the user's input.
-Do not translate unless requested.
-
-Create 10 viral YouTube thumbnail prompts for:
-
-${topic}
-
-Each prompt must include:
-- Main subject
-- Facial expression
-- Background
-- Lighting
-- Colors
-- Thumbnail text
-
-Make them highly clickable.
-`;
-}
 
     const response = await fetch(
       'https://openrouter.ai/api/v1/chat/completions',
@@ -304,7 +157,7 @@ Keep outputs professional and well-structured.
             },
           ],
           temperature: 0.8,
-          max_tokens: 1000,
+          max_tokens: 2000,
         }),
       }
     );

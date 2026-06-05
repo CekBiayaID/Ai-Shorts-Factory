@@ -1,64 +1,87 @@
 export default function FAQPage() {
-  const faqs = [
-    {
-      question: "What is AI Shorts Factory?",
-      answer:
-        "AI Shorts Factory is an AI-powered tool that helps creators generate YouTube Shorts, TikTok scripts, titles, descriptions, hashtags, and content ideas in seconds.",
-    },
-    {
-      question: "Is there a free plan?",
-      answer:
-        "Yes. Free users receive limited daily generations to try the platform before upgrading.",
-    },
-    {
-      question: "What is included in the Pro plan?",
-      answer:
-        "The Pro plan provides higher generation limits, premium features, and a smoother content creation workflow.",
-    },
-    {
-      question: "Can I cancel my subscription anytime?",
-      answer:
-        "Yes. You can cancel your subscription at any time.",
-    },
-    {
-      question: "Do I need technical skills?",
-      answer:
-        "No. Simply enter your topic and AI Shorts Factory will generate content for you.",
-    },
-    {
-      question: "Which platforms are supported?",
-      answer:
-        "AI Shorts Factory is designed for YouTube Shorts, TikTok, Instagram Reels, and other short-form content platforms.",
-    },
-  ];
-
   return (
-    <div
-      style={{
-        maxWidth: "800px",
-        margin: "0 auto",
-        padding: "40px 20px",
-        color: "white",
-      }}
-    >
-      <h1 style={{ marginBottom: "30px" }}>
-        Frequently Asked Questions
-      </h1>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-4xl mx-auto">
 
-      {faqs.map((faq, index) => (
-        <div
-          key={index}
-          style={{
-            marginBottom: "20px",
-            padding: "15px",
-            border: "1px solid #333",
-            borderRadius: "8px",
-          }}
-        >
-          <h3>{faq.question}</h3>
-          <p>{faq.answer}</p>
+        <h1 className="text-4xl font-bold mb-8">
+          Frequently Asked Questions
+        </h1>
+
+        <div className="space-y-6">
+
+          <div>
+            <h2 className="font-bold text-xl">
+              What is AI Content Repurposer?
+            </h2>
+            <p className="text-gray-300">
+              AI Content Repurposer helps creators transform videos,
+              blog posts, podcasts, transcripts, and social media content
+              into new content formats instantly.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="font-bold text-xl">
+              What content can I repurpose?
+            </h2>
+            <p className="text-gray-300">
+              You can repurpose YouTube videos, blog articles,
+              podcast transcripts, social media posts, and other text-based content.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="font-bold text-xl">
+              How many generations do I get?
+            </h2>
+            <p className="text-gray-300">
+              Free users get 5 generations per day.
+              Pro users get up to 100 generations per day.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="font-bold text-xl">
+              What is included in Pro?
+            </h2>
+            <p className="text-gray-300">
+              Pro includes higher daily limits,
+              PDF export, DOCX export,
+              priority support, and access to all repurposing tools.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="font-bold text-xl">
+              Can I export my results?
+            </h2>
+            <p className="text-gray-300">
+              Yes. Pro users can export results as PDF and DOCX files.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="font-bold text-xl">
+              Do you store my content?
+            </h2>
+            <p className="text-gray-300">
+              Your content is processed to generate results.
+              Please avoid submitting confidential information.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="font-bold text-xl">
+              Can I cancel my subscription?
+            </h2>
+            <p className="text-gray-300">
+              Yes. You can cancel your subscription anytime.
+            </p>
+          </div>
+
         </div>
-      ))}
-    </div>
+
+      </div>
+    </main>
   );
 }
