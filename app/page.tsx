@@ -432,11 +432,17 @@ const filteredHistory = history.filter(
       : 'text-gray-600 mb-4'
   }
 >
-  Turn Videos, Blogs, Podcasts And Posts Into New Content With AI.
+  Paste a video transcript, blog article, podcast, social post, or idea.
+  Get YouTube Shorts, TikTok scripts, Instagram captions, X threads,
+  LinkedIn posts, hashtags, and content ideas instantly.
 </p>
 
+<div className="mb-5 text-sm text-gray-300">
+  ✓ YouTube Shorts • TikTok Scripts • Instagram Captions •
+  X Threads • LinkedIn Posts • Hashtags • Content Ideas
+</div>
 
- <div className="flex items-center gap-3 mb-4">
+<div className="flex items-center gap-3 mb-4">
 
   <button
     onClick={() => setDarkMode(!darkMode)}
@@ -456,7 +462,7 @@ const filteredHistory = history.filter(
 
 </div>
 
-        <div className="grid lg:grid-cols-3 gap-4">
+        <div className="grid lg:grid-cols-3 gap-4 items-start">
 <div>
 
   <div className="flex flex-wrap gap-2 mb-3">
@@ -522,8 +528,38 @@ const filteredHistory = history.filter(
 
 </div>
 
-          <div className="mt-20">
-        {loading ? (
+          <div>
+
+  <div className="flex gap-2 justify-center mb-3 mt-[33px]">
+
+    <button
+      onClick={generate}
+      disabled={!isLoggedIn || usedToday >= dailyLimit || loading}
+      className="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold"
+    >
+      {
+        !isLoggedIn
+        ? "Login Required"
+        : loading
+        ? "Generating..."
+        : usedToday >= dailyLimit
+        ? "Daily Limit Reached"
+        : "Repurpose Content"
+      }
+    </button>
+
+    {loading && (
+      <button
+        onClick={stopGenerating}
+        className="bg-red-600 text-white px-6 py-2 rounded-xl font-bold"
+      >
+        Stop
+      </button>
+    )}
+
+  </div>
+
+  {loading ? (
   <div className="w-full h-[320px] flex items-center justify-center">
     <div className="flex flex-col items-center gap-3">
       <div className="animate-spin h-10 w-10 rounded-full border-4 border-blue-500 border-t-transparent"></div>
@@ -557,8 +593,8 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
 </div>
     <div className={
   darkMode
-    ? 'border border-gray-700 rounded-xl p-4 bg-gray-800'
-    : 'border-2 border-gray-300 rounded-xl p-4 bg-gray-50'
+    ? 'border border-gray-700 rounded-xl p-4 bg-gray-800 h-[320px] mt-[85px]'
+    : 'border-2 border-gray-300 rounded-xl p-4 bg-gray-50 h-[320px] mt-[85px]'
 }>
 
             <div className="flex justify-between items-center mb-3">
@@ -645,31 +681,6 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
 
         <div className="flex flex-wrap gap-4 mt-6">
 
-  <button
-  onClick={generate}
-  disabled={!isLoggedIn || usedToday >= dailyLimit || loading}
-  className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold"
->
-  {
-    !isLoggedIn
-    ? "Login Required"
-    : loading
-    ? "Generating..."
-    : usedToday >= dailyLimit
-    ? "Daily Limit Reached"
-    : "Repurpose Content"
-  }
-</button>
-
-{loading && (
-  <button
-    onClick={stopGenerating}
-    className="bg-red-600 text-white px-6 py-3 rounded-xl font-bold"
-  >
-    Stop
-  </button>
-)}
-
           <button
   onClick={clearInput}
   className="bg-yellow-600 text-white px-6 py-3 rounded-xl font-bold"
@@ -678,18 +689,18 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
 </button>
 
           <button
-            onClick={copyResult}
-            className="bg-green-600 text-white px-6 py-3 rounded-xl font-bold"
-          >
-            Copy Result
-          </button>
-
-<button
   onClick={clearOutput}
   className="bg-gray-600 text-white px-6 py-3 rounded-xl font-bold"
 >
   Clear Output
 </button>
+
+<button
+            onClick={copyResult}
+            className="bg-green-600 text-white px-6 py-3 rounded-xl font-bold"
+          >
+            Copy Result
+          </button>
 
           <button
             onClick={downloadTxt}
