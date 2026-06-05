@@ -836,6 +836,8 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
           {" | "}
           <a href="/terms">Terms</a>
           {" | "}
+          <a href="/faq">FAQ</a>
+          {" | "}
           <a href="/contact">Contact</a>
         </div>
 
