@@ -209,12 +209,27 @@ console.log(data);
   localStorage.getItem("usedToday") || 0
 );
 
+const newCount = usedToday + 1;
+
 localStorage.setItem(
   "usedToday",
-  String(usedToday + 1)
+  String(newCount)
 );
 
-setUsedToday(usedToday + 1);
+setUsedToday(newCount);
+
+if (
+  plan !== "PRO" &&
+  newCount >= dailyLimit
+) {
+  setTimeout(() => {
+    alert(
+      "🎉 You've used all 5 free generations today.\n\nUpgrade to Pro for up to 100 generations per day."
+    );
+
+    router.push("/pricing");
+  }, 500);
+}
 
       setHistory((prev) => [
         {
