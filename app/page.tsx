@@ -37,6 +37,7 @@ const [search, setSearch] = useState('');
     setIsLoggedIn(!!data.session);
 
     if (data.session?.user) {
+      await loadHistory(data.session.user.id)
       console.log("LOGIN EMAIL:", data.session.user.email);
       console.log("LOGIN USER:", data.session.user);
 
@@ -143,6 +144,26 @@ useEffect(() => {
   );
 }, [input]);
 
+const loadHistory = async (userId: string) => {
+  const { data } = await supabase
+    .from("history")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (data) {
+    setHistory(
+      data.map(item => ({
+        topic: item.topic,
+        result: item.result,
+        createdAt: new Date(
+          item.created_at
+        ).toLocaleString()
+      }))
+    );
+  }
+};
+
 const stopGenerating = () => {
   controller?.abort();
   setLoading(false);
@@ -227,6 +248,14 @@ if (
     router.push("/pricing");
   }, 500);
 }
+
+await supabase
+  .from("history")
+  .insert({
+    user_id: session.data.session?.user.id,
+    topic: input,
+    result: results
+  });
 
       setHistory((prev) => [
         {
