@@ -82,9 +82,29 @@ export default function PricingPage() {
             $5
           </p>
 
+          <p className="text-sm mt-1 opacity-90">
+  ( IDR Rp75.000,00 )
+</p>
+
           <p className="mt-2">
             Per Month
           </p>
+
+<div className="mt-4 text-sm">
+  <p>
+    AI Shorts Factory Pro helps creators generate:
+  </p>
+
+  <ul className="mt-2 space-y-1">
+    <li>✓ YouTube Shorts Scripts</li>
+    <li>✓ TikTok Scripts</li>
+    <li>✓ Video Titles</li>
+    <li>✓ Hashtags</li>
+    <li>✓ Content Ideas</li>
+    <li>✓ Blog Content</li>
+  </ul>
+
+</div>
 
           <ul className="mt-6 space-y-3">
             <li>✓ 100 Generations Per Day</li>
