@@ -82,10 +82,6 @@ export default function PricingPage() {
             $5
           </p>
 
-          <p className="text-sm mt-1 opacity-90">
-  ( IDR Rp75.000,00 )
-</p>
-
           <p className="mt-2">
             Per Month
           </p>
@@ -118,7 +114,7 @@ export default function PricingPage() {
   onClick={bayar}
   className="w-full mt-8 bg-green-600 hover:bg-green-700 py-3 rounded-lg font-semibold"
 >
-  Pay via (QRIS/E-Wallet)
+  Pay with QRIS/E-Wallet
 </button>
 
 <button
@@ -129,7 +125,7 @@ export default function PricingPage() {
   }
   className="w-full mt-3 bg-white text-blue-700 hover:bg-gray-200 py-3 rounded-lg font-semibold"
 >
-  Pay Global (Card/PayPal)
+  Pay with Card/PayPal
 </button>
         </div>
 
