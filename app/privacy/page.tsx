@@ -6,7 +6,7 @@ export default function PrivacyPage() {
       </h1>
 
       <p>
-        AI Shorts Factory respects your privacy.
+        AI Content Repurposer respects your privacy.
       </p>
 
       <p>

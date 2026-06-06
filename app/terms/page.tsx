@@ -6,7 +6,7 @@ export default function TermsPage() {
       </h1>
 
       <p>
-        By using AI Shorts Factory, you agree to use the service responsibly.
+        By using AI Content Repurposer, you agree to use the service responsibly.
       </p>
 
       <p>
