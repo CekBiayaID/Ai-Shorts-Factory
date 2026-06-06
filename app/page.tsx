@@ -301,7 +301,7 @@ await supabase
 
   pdf.text(lines, 10, 20);
 
-  pdf.save('hasil-ai.pdf');
+  pdf.save('ai-content-output.pdf');
 };
   
 const downloadTxt = () => {
@@ -313,7 +313,7 @@ const downloadTxt = () => {
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'hasil-ai.txt';
+    a.download = 'ai-content-output.txt';
     a.click();
 
     URL.revokeObjectURL(url);
@@ -336,7 +336,7 @@ const downloadTxt = () => {
 
   const blob = await Packer.toBlob(doc);
 
-  saveAs(blob, 'hasil-ai.docx');
+  saveAs(blob, 'ai-content-output.docx');
 };
 
 const clearInput = () => {
@@ -561,21 +561,21 @@ const filteredHistory = history.filter(
 
   <div className="flex gap-2 justify-center mb-3 mt-[33px]">
 
+{!loading && (
     <button
       onClick={generate}
-      disabled={!isLoggedIn || usedToday >= dailyLimit || loading}
+      disabled={!isLoggedIn || usedToday >= dailyLimit}
       className="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold"
     >
       {
         !isLoggedIn
         ? "Login Required"
-        : loading
-        ? "Generating..."
         : usedToday >= dailyLimit
         ? "Daily Limit Reached"
         : "Repurpose Content"
       }
     </button>
+)}
 
     {loading && (
       <button
@@ -732,11 +732,12 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
           </button>
 
           <button
-            onClick={downloadTxt}
-            className="bg-purple-600 text-white px-6 py-3 rounded-xl font-bold"
-          >
-            Download TXT
-          </button>
+  onClick={downloadTxt}
+  disabled={!output.trim()}
+  className="bg-purple-600 text-white px-6 py-3 rounded-xl font-bold"
+>
+  Download TXT
+</button>
 
 <button
   onClick={() => {

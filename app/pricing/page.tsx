@@ -65,7 +65,8 @@ export default function PricingPage() {
 
           <ul className="mt-6 space-y-3">
             <li>✓ 5 Generations Per Day</li>
-            <li>✓ Basic AI Tools</li>
+            <li>✓ No PDF</li>
+            <li>✓ No DOCX</li>
           </ul>
 
           <button className="w-full mt-8 bg-gray-700 hover:bg-gray-600 py-3 rounded-lg font-semibold">
