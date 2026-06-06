@@ -111,13 +111,6 @@ export default function PricingPage() {
           </ul>
 
           <button
-  onClick={bayar}
-  className="w-full mt-8 bg-green-600 hover:bg-green-700 py-3 rounded-lg font-semibold"
->
-  Pay with QRIS/E-Wallet
-</button>
-
-<button
   onClick={() =>
     window.open(
       "https://indopanjayautama.lemonsqueezy.com/checkout/buy/f90ccb6a-a556-41b0-97f0-1ce21ae19984"
@@ -126,6 +119,13 @@ export default function PricingPage() {
   className="w-full mt-3 bg-white text-blue-700 hover:bg-gray-200 py-3 rounded-lg font-semibold"
 >
   Pay with Card/PayPal
+</button>
+
+<button
+  onClick={bayar}
+  className="w-full mt-8 bg-green-600 hover:bg-green-700 py-3 rounded-lg font-semibold"
+>
+  Pay with QRIS/E-Wallet
 </button>
         </div>
 
