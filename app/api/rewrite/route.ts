@@ -129,7 +129,6 @@ Create 30 relevant hashtags.
 Create 10 additional content ideas based on this topic.
 `;
 
-console.log("KEY =", process.env.GEMINI_API_KEY);
 console.log("USER =", userId);
 
    let result;
