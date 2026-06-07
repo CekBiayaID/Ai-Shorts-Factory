@@ -19,8 +19,14 @@ if (!session) {
       console.log("START PAYMENT");
 
       const res = await fetch("/api/midtrans", {
-        method: "POST",
-      });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    email: session.user.email,
+  }),
+});
 
       console.log("STATUS:", res.status);
 
