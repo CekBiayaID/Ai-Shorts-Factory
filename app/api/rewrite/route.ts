@@ -137,13 +137,27 @@ Create 10 additional content ideas based on this topic.
 console.log("KEY =", process.env.GEMINI_API_KEY);
 console.log("USER =", userId);
 
-   const result = await ai.models.generateContent({
-  model: "gemini-2.5-flash",
-  contents: prompt,
-});
+   let result;
+
+for (let i = 0; i < 3; i++) {
+  try {
+    result = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+    });
+
+    break;
+  } catch (err: any) {
+    console.log(`Retry ${i + 1}/3`);
+
+    if (i === 2) throw err;
+
+    await new Promise((r) => setTimeout(r, 3000));
+  }
+}
 
 const output =
-  result.text || "No Results";
+  result?.text || "No Results";
 
     await supabaseAdmin
   .from("profiles")
