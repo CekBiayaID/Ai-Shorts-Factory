@@ -11,7 +11,6 @@ export default function PricingPage() {
 } = await supabase.auth.getSession();
 
 if (!session) {
-  alert("Please login first");
   router.push("/login");
   return;
 }
@@ -138,7 +137,6 @@ if (!session) {
   } = await supabase.auth.getSession();
 
   if (!session) {
-    alert("Please login first");
     router.push("/login");
     return;
   }

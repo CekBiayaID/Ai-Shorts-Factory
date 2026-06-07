@@ -50,7 +50,7 @@ router.push('/');
 
 const signUp = async () => {
 if (!email || !password) {
-alert('Please enter your email and password.');
+setErrorMsg('Please enter your email and password.');
 return;
 }
 
@@ -64,12 +64,12 @@ const { error } = await supabase.auth.signUp({
 setLoading(false);
 
 if (error) {
-  alert('❌ Unable to create account');
+  setErrorMsg('❌ Unable to create account');
   console.error(error);
   return;
 }
 
-alert('✅ Account created successfully! Please check your email.');
+setErrorMsg('✅ Account created successfully! Please check your email.');
 
 };
 
