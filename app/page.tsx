@@ -399,8 +399,22 @@ const filteredHistory = history.filter(
       onClick={async () => {
         console.log('LOGOUT CLICKED')
         await supabase.auth.signOut();
-        setIsLoggedIn(false);
-        router.push('/');
+
+setIsLoggedIn(false);
+
+setInput('');
+setOutput('');
+setHistory([]);
+
+setPlan('free');
+setUsedToday(0);
+setExpiresAt('');
+
+localStorage.removeItem('lastInput');
+localStorage.removeItem('lastOutput');
+localStorage.removeItem('history');
+
+router.push('/');
       }}
       className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-bold"
     >
