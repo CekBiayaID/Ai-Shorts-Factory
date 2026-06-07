@@ -1,51 +1,51 @@
 "use client";
 
+import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
 export default function PricingPage() {
   const router = useRouter();
+  const [errorMsg, setErrorMsg] = useState("");
+
   async function bayar() {
     const {
-  data: { session },
-} = await supabase.auth.getSession();
+      data: { session },
+    } = await supabase.auth.getSession();
 
-if (!session) {
-  router.push("/login");
-  return;
-}
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+
     try {
-      console.log("START PAYMENT");
+      setErrorMsg("");
 
       const res = await fetch("/api/midtrans", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    email: session.user.email,
-  }),
-});
-
-      console.log("STATUS:", res.status);
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: session.user.email,
+        }),
+      });
 
       const data = await res.json();
-
-      console.log("MIDTRANS RESPONSE:", data);
 
       if (data.redirect_url) {
         window.open(data.redirect_url, "_blank");
         return;
       }
 
-      alert(
+      setErrorMsg(
         data.details ||
-        data.error ||
-        "Failed to create transaction"
+          data.error ||
+          "Failed to create transaction"
       );
     } catch (err) {
       console.error("PAYMENT ERROR:", err);
-      alert("An error occurred");
+      setErrorMsg("An error occurred");
     }
   }
 
@@ -105,21 +105,20 @@ if (!session) {
             Per Month
           </p>
 
-<div className="mt-4 text-sm">
-  <p>
-    AI Content Repurposer Pro helps creators transform:
-  </p>
+          <div className="mt-4 text-sm">
+            <p>
+              AI Content Repurposer Pro helps creators transform:
+            </p>
 
-  <ul className="mt-2 space-y-1">
-    <li>✓ YouTube Video → Shorts</li>
-    <li>✓ Blog → Social Content</li>
-    <li>✓ Podcast → Viral Posts</li>
-    <li>✓ TikTok Repurposing</li>
-    <li>✓ Viral Titles & Hashtags</li>
-    <li>✓ Content Ideas Geneator</li>
-  </ul>
-
-</div>
+            <ul className="mt-2 space-y-1">
+              <li>✓ YouTube Video → Shorts</li>
+              <li>✓ Blog → Social Content</li>
+              <li>✓ Podcast → Viral Posts</li>
+              <li>✓ TikTok Repurposing</li>
+              <li>✓ Viral Titles & Hashtags</li>
+              <li>✓ Content Ideas Generator</li>
+            </ul>
+          </div>
 
           <ul className="mt-6 space-y-3">
             <li>✓ 100 Generations Per Day</li>
@@ -129,34 +128,38 @@ if (!session) {
             <li>✓ Monthly Subscription</li>
           </ul>
 
+          {errorMsg && (
+            <div className="mt-4 mb-2 bg-red-500/20 border border-red-300 text-white p-3 rounded-lg text-sm">
+              {errorMsg}
+            </div>
+          )}
+
           <button
-  onClick={async () => {
+            onClick={async () => {
+              const {
+                data: { session },
+              } = await supabase.auth.getSession();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+              if (!session) {
+                router.push("/login");
+                return;
+              }
 
-  if (!session) {
-    router.push("/login");
-    return;
-  }
+              window.open(
+                "https://indopanjayautama.lemonsqueezy.com/checkout/buy/f90ccb6a-a556-41b0-97f0-1ce21ae19984"
+              );
+            }}
+            className="w-full mt-3 bg-white text-blue-700 hover:bg-gray-200 py-3 rounded-lg font-semibold"
+          >
+            Pay with Card/PayPal
+          </button>
 
-  window.open(
-    "https://indopanjayautama.lemonsqueezy.com/checkout/buy/f90ccb6a-a556-41b0-97f0-1ce21ae19984"
-  );
-}}
-
-  className="w-full mt-3 bg-white text-blue-700 hover:bg-gray-200 py-3 rounded-lg font-semibold"
->
-  Pay with Card/PayPal
-</button>
-
-<button
-  onClick={bayar}
-  className="w-full mt-8 bg-green-600 hover:bg-green-700 py-3 rounded-lg font-semibold"
->
-  Pay with QRIS/E-Wallet
-</button>
+          <button
+            onClick={bayar}
+            className="w-full mt-3 bg-green-600 hover:bg-green-700 py-3 rounded-lg font-semibold"
+          >
+            Pay with QRIS/E-Wallet
+          </button>
         </div>
 
       </div>
