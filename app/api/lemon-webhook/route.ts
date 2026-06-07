@@ -2,6 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function POST(req: NextRequest) {
+  const secret = req.headers.get(
+  "x-webhook-secret"
+);
+
+if (
+  secret !==
+  process.env.LEMON_WEBHOOK_SECRET
+) {
+  return NextResponse.json(
+    { error: "Unauthorized" },
+    { status: 401 }
+  );
+}
+
   try {
     const body = await req.json();
 

@@ -1,7 +1,20 @@
 "use client";
 
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
+
 export default function PricingPage() {
+  const router = useRouter();
   async function bayar() {
+    const {
+  data: { session },
+} = await supabase.auth.getSession();
+
+if (!session) {
+  alert("Please login first");
+  router.push("/login");
+  return;
+}
     try {
       console.log("START PAYMENT");
 
@@ -112,11 +125,23 @@ export default function PricingPage() {
           </ul>
 
           <button
-  onClick={() =>
-    window.open(
-      "https://indopanjayautama.lemonsqueezy.com/checkout/buy/f90ccb6a-a556-41b0-97f0-1ce21ae19984"
-    )
+  onClick={async () => {
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    alert("Please login first");
+    router.push("/login");
+    return;
   }
+
+  window.open(
+    "https://indopanjayautama.lemonsqueezy.com/checkout/buy/f90ccb6a-a556-41b0-97f0-1ce21ae19984"
+  );
+}}
+
   className="w-full mt-3 bg-white text-blue-700 hover:bg-gray-200 py-3 rounded-lg font-semibold"
 >
   Pay with Card/PayPal
