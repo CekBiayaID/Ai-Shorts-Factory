@@ -11,12 +11,13 @@ const [email, setEmail] = useState('');
 const [password, setPassword] = useState('');
 const [showPassword, setShowPassword] = useState(false);
 const [loading, setLoading] = useState(false);
+const [errorMsg, setErrorMsg] = useState("");
 
 const signIn = async (e: React.FormEvent) => {
 e.preventDefault();
 
 if (!email || !password) {
-  alert('Please enter your email and password.');
+  setErrorMsg("Please enter your email and password.");
   return;
 }
 
@@ -33,7 +34,7 @@ console.log("LOGIN ERROR:", error);
 setLoading(false);
 
 if (error) {
-  alert('❌ Incorrect email or password');
+  setErrorMsg("Incorrect email or password");
   return;
 }
 
@@ -82,6 +83,12 @@ AI Content Repurposer
     <p className="text-center text-gray-500 mb-6">
       Sign In or Create an Account
     </p>
+
+    {errorMsg && (
+  <div className="bg-red-100 text-red-700 p-3 rounded-lg mb-4">
+    {errorMsg}
+  </div>
+)}
 
     <form onSubmit={signIn} className="space-y-4">
       <div>
