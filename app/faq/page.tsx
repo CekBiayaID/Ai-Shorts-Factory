@@ -35,7 +35,7 @@ export default function FAQPage() {
               How many generations do I get?
             </h2>
             <p className="text-gray-300">
-              Free users get 5 generations per day.
+              Free users get 3 generations per day.
               Pro users get up to 100 generations per day.
             </p>
           </div>

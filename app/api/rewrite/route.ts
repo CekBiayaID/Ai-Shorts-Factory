@@ -1,5 +1,15 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { GoogleGenAI } from "@google/genai";
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY!,
+});
+
+console.log(
+  "GEMINI KEY:",
+  process.env.GEMINI_API_KEY
+);
 
 export async function POST(request: Request) {
   try {
@@ -34,7 +44,7 @@ if (!profile) {
 const limit =
   profile.plan === "pro"
     ? 100
-    : 5;
+    : 3;
 
 if (profile.daily_used >= limit) {
   return NextResponse.json(
@@ -124,63 +134,39 @@ Create 30 relevant hashtags.
 Create 10 additional content ideas based on this topic.
 `;
 
-    const response = await fetch(
-      'https://openrouter.ai/api/v1/chat/completions',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'deepseek/deepseek-chat',
-          messages: [
-            {
-              role: 'system',
-              content: `
-You are a professional AI Content Creator.
+console.log("KEY =", process.env.GEMINI_API_KEY);
+console.log("USER =", userId);
 
-CRITICAL RULE:
-Always respond in the exact language used by the user.
-If the user writes in English, respond entirely in English.
-If the user writes in Indonesian, respond entirely in Indonesian.
-Never translate unless explicitly requested.
+   const result = await ai.models.generateContent({
+  model: "gemini-2.0-flash",
+  contents: prompt,
+});
 
-Create high-quality, engaging, SEO-optimized content.
-Avoid short answers.
-Keep outputs professional and well-structured.
-`,
-            },
-            {
-              role: 'user',
-              content: prompt,
-            },
-          ],
-          temperature: 0.8,
-          max_tokens: 2000,
-        }),
-      }
-    );
+const output =
+  result.text || "No Results";
 
-    const data = await response.json();
+    await supabaseAdmin
+  .from("profiles")
+  .update({
+    daily_used: profile.daily_used + 1
+  })
+  .eq("id", userId);
 
-    if (data.error) {
-      return NextResponse.json({
-        hasil: `ERROR: ${data.error.message}`,
-      });
+    return NextResponse.json({
+  hasil: output,
+})
+
+} catch (error: any) {
+  console.error("FULL ERROR:", error)
+
+  return NextResponse.json(
+    {
+      error: true,
+      message: error?.message || String(error),
+    },
+    {
+      status: 500,
     }
-
-    return NextResponse.json({
-      hasil:
-        data.choices?.[0]?.message?.content ||
-        'No Results',
-    });
-
-  } catch (error: any) {
-    console.error(error);
-
-    return NextResponse.json({
-      hasil: `ERROR: ${error?.message || 'Unknown Error'}`,
-    });
-  }
+  )
+}
 }

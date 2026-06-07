@@ -64,7 +64,7 @@ export default function PricingPage() {
           </p>
 
           <ul className="mt-6 space-y-3">
-            <li>✓ 5 Generations Per Day</li>
+            <li>✓ 3 Generations Per Day</li>
             <li>✓ No PDF</li>
             <li>✓ No DOCX</li>
           </ul>

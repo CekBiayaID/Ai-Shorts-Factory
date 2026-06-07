@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase'
 
 type HistoryItem = {
+  id: number;
   topic: string;
   result: string;
   createdAt: string;
@@ -28,7 +29,7 @@ const [darkMode, setDarkMode] = useState(true);
 const [search, setSearch] = useState('');
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [controller, setController] = useState<AbortController | null>(null);
-  const [dailyLimit, setDailyLimit] = useState(5);
+  const [dailyLimit, setDailyLimit] = useState(3);
   const [usedToday, setUsedToday] = useState(0);
   const [expiresAt, setExpiresAt] = useState("")
 
@@ -56,11 +57,12 @@ console.log("PROFILE ERROR:", result.error);
       if (profile) {
         setPlan(profile.plan?.toUpperCase() || 'FREE');
         setExpiresAt(profile.expires_at || "")
+        setUsedToday(profile.daily_used || 0);
 
         if (profile.plan === 'pro') {
           setDailyLimit(100);
         } else {
-          setDailyLimit(5);
+          setDailyLimit(3);
         }
       }
     }
@@ -88,22 +90,6 @@ console.log("PROFILE ERROR:", result.error);
       localStorage.removeItem('history');
     }
   }, []);
-
-  useEffect(() => {
-  const used = Number(localStorage.getItem("usedToday") || 0);
-  setUsedToday(used);
-}, []);
-
-useEffect(() => {
-  const today = new Date().toDateString();
-  const lastDate = localStorage.getItem("lastDate");
-
-  if (lastDate !== today) {
-    localStorage.setItem("lastDate", today);
-    localStorage.setItem("usedToday", "0");
-    setUsedToday(0);
-  }
-}, []);
 
   useEffect(() => {
     localStorage.setItem(
@@ -153,14 +139,15 @@ const loadHistory = async (userId: string) => {
 
   if (data) {
     setHistory(
-      data.map(item => ({
-        topic: item.topic,
-        result: item.result,
-        createdAt: new Date(
-          item.created_at
-        ).toLocaleString()
-      }))
-    );
+  data.map(item => ({
+    id: item.id,
+    topic: item.topic,
+    result: item.result,
+    createdAt: new Date(
+      item.created_at
+    ).toLocaleString()
+  }))
+);
   }
 };
 
@@ -179,10 +166,6 @@ const stopGenerating = () => {
 
     if (loading) return;
     if (!input.trim()) return;
-
-    const usedToday = Number(
-  localStorage.getItem("usedToday") || 0
-);
 
 if (plan !== "PRO" && usedToday >= dailyLimit) {
   alert("Daily Limit Reached. Upgrade to Pro...");
@@ -218,21 +201,23 @@ const response = await fetch("/api/rewrite", {
       const data = await response.json();
 console.log(data);
 
-      const results =
+if (data?.error) {
+  throw new Error(data.message);
+}
+
+const results =
   data?.hasil || 'No Results';
 
-      setOutput(results);
-
-      const usedToday = Number(
-  localStorage.getItem("usedToday") || 0
-);
+setOutput(results);
 
 const newCount = usedToday + 1;
 
-localStorage.setItem(
-  "usedToday",
-  String(newCount)
-);
+await supabase
+  .from("profiles")
+  .update({
+    daily_used: newCount
+  })
+  .eq("email", session.data.session?.user.email);
 
 setUsedToday(newCount);
 
@@ -242,7 +227,7 @@ if (
 ) {
   setTimeout(() => {
     alert(
-      "🎉 You've used all 5 free generations today.\n\nUpgrade to Pro for up to 100 generations per day."
+      "🎉 You've used all 3 free generations today.\n\nUpgrade to Pro for up to 100 generations per day."
     );
 
     router.push("/pricing");
@@ -258,13 +243,14 @@ await supabase
   });
 
       setHistory((prev) => [
-        {
-          topic: input,
-          result: results,
-          createdAt: new Date().toLocaleString(),
-        },
-        ...prev,
-      ]);
+  {
+    id: Date.now(),
+    topic: input,
+    result: results,
+    createdAt: new Date().toLocaleString(),
+  },
+  ...prev,
+]);
    } catch (error: any) {
 
   if (error?.name === "AbortError") {
@@ -273,15 +259,13 @@ await supabase
   }
 
   console.error(error);
-  setOutput("An error occurred");
+
+  setOutput(
+    "Service temporarily unavailable. Please try again in a few minutes."
+  );
 }
 
     setLoading(false);
-  };
-
-  const copyResult = async () => {
-    await navigator.clipboard.writeText(output);
-    alert('Success copied');
   };
 
   const downloadPdf = () => {
@@ -348,20 +332,36 @@ const clearOutput = () => {
   localStorage.removeItem('lastOutput');
 };
 
-  const clearHistory = () => {
-    if (!confirm('Delete All History?')) return;
+  const clearHistory = async () => {
+  if (!confirm('Delete All History?')) return;
 
-    setHistory([]);
-    localStorage.removeItem('history');
-  };
+  const session =
+    await supabase.auth.getSession();
 
-const deleteHistoryItem = (
-  indexToDelete: number
+  await supabase
+    .from("history")
+    .delete()
+    .eq(
+      "user_id",
+      session.data.session?.user.id
+    );
+
+  setHistory([]);
+  localStorage.removeItem("history");
+};
+
+const deleteHistoryItem = async (
+  id: number
 ) => {
+
+  await supabase
+    .from("history")
+    .delete()
+    .eq("id", id);
+
   setHistory(
     history.filter(
-      (_, index) =>
-        index !== indexToDelete
+      item => item.id !== id
     )
   );
 };
@@ -684,7 +684,7 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
   <button
     onClick={(e) => {
       e.stopPropagation();
-      deleteHistoryItem(index);
+      deleteHistoryItem(item.id);
     }}
     className="text-red-500 font-bold"
   >
@@ -723,13 +723,6 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
 >
   Clear Output
 </button>
-
-<button
-            onClick={copyResult}
-            className="bg-green-600 text-white px-6 py-3 rounded-xl font-bold"
-          >
-            Copy Result
-          </button>
 
           <button
   onClick={downloadTxt}

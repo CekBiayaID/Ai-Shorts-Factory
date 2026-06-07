@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Shorts Factory",
-  description: "Create viral content for YouTube, Shorts and TikTok with AI",
+  title: "AI Content Repurposer",
+  description: "Turn Any Content Into Shorts, Titles, Descriptions And Hashtags In Seconds.",
 };
 
 export default function RootLayout({
