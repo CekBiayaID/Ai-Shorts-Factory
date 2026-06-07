@@ -61,6 +61,33 @@ const { error } = await supabase.auth.signUp({
   password,
 });
 
+const blockedDomains = [
+  "mailinator.com",
+  "10minutemail.com",
+  "guerrillamail.com",
+  "tempmail.com",
+  "temp-mail.org",
+  "yopmail.com",
+  "sharklasers.com",
+  "maildrop.cc",
+  "dispostable.com",
+  "fakeinbox.com",
+  "trashmail.com",
+  "getnada.com",
+  "moakt.com",
+  "throwawaymail.com",
+  "tempail.com",
+  "tixpad.com"
+  "snocv.com"
+];
+
+const domain = email.split("@")[1]?.toLowerCase();
+
+if (blockedDomains.includes(domain)) {
+  setErrorMsg("Temporary email addresses are not allowed.");
+  return;
+}
+
 setLoading(false);
 
 if (error) {
