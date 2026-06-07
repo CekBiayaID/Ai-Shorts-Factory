@@ -180,13 +180,6 @@ setOutput(results);
 
 const newCount = usedToday + 1;
 
-await supabase
-  .from("profiles")
-  .update({
-    daily_used: newCount
-  })
-  .eq("email", session.data.session?.user.email);
-
 setUsedToday(newCount);
 
 if (
