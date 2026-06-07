@@ -98,38 +98,6 @@ console.log("PROFILE ERROR:", result.error);
     );
   }, [history]);
 
-  useEffect(() => {
-  const savedOutput =
-    localStorage.getItem('lastOutput');
-
-  if (savedOutput) {
-    setOutput(savedOutput);
-  }
-}, []);
-
-useEffect(() => {
-  localStorage.setItem(
-    'lastOutput',
-    output
-  );
-}, [output]);
-
-  useEffect(() => {
-  const savedInput =
-    localStorage.getItem('lastInput');
-
-  if (savedInput) {
-    setInput(savedInput);
-  }
-}, []);
-
-useEffect(() => {
-  localStorage.setItem(
-    'lastInput',
-    input
-  );
-}, [input]);
-
 const loadHistory = async (userId: string) => {
   const { data } = await supabase
     .from("history")
