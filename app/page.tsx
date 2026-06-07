@@ -548,18 +548,23 @@ router.push('/');
 
 {!loading && (
     <button
-      onClick={generate}
-      disabled={!isLoggedIn || usedToday >= dailyLimit}
-      className="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold"
-    >
-      {
-        !isLoggedIn
-        ? "Login Required"
-        : usedToday >= dailyLimit
-        ? "Daily Limit Reached"
-        : "Repurpose Content"
-      }
-    </button>
+  onClick={() => {
+    if (!isLoggedIn) {
+      router.push("/login");
+      return;
+    }
+
+    generate();
+  }}
+  disabled={usedToday >= dailyLimit}
+  className="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold"
+>
+  {
+    usedToday >= dailyLimit
+      ? "Daily Limit Reached"
+      : "Repurpose Content"
+  }
+</button>
 )}
 
     {loading && (
