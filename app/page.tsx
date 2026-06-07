@@ -178,13 +178,23 @@ const results =
 
 setOutput(results);
 
-const newCount = usedToday + 1;
+const { data: profileData } = await supabase
+  .from("profiles")
+  .select("daily_used")
+  .eq(
+    "email",
+    session.data.session?.user.email
+  )
+  .single();
 
-setUsedToday(newCount);
+if (profileData) {
+  setUsedToday(profileData.daily_used);
+}
 
 if (
   plan !== "PRO" &&
-  newCount >= dailyLimit
+  profileData &&
+  profileData.daily_used >= dailyLimit
 ) {
   setTimeout(() => {
     alert(
