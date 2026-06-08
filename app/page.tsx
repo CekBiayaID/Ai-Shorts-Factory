@@ -361,21 +361,21 @@ const filteredHistory = history.filter(
     <main
   className={
     darkMode
-      ? 'min-h-screen bg-gray-950 p-6'
+      ? 'min-h-screen bg-[#050816] p-6'
       : 'min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6'
   }
 >
       <div
   className={
     darkMode
-      ? 'max-w-7xl mx-auto bg-gray-900 rounded-3xl shadow-xl p-6 text-white'
+      ? 'max-w-7xl mx-auto bg-[#0B1220] rounded-3xl shadow-xl p-6 text-white'
       : 'max-w-7xl mx-auto bg-white rounded-3xl shadow-xl p-6'
   }
 >
        <div className="flex justify-between items-center mb-3">
-  <h1 className="text-4xl font-bold text-indigo-400">
-    AI Content Repurposer
-  </h1>
+  <h1 className="text-4xl font-black bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
+  AI Content Repurposer
+</h1>
 
   {plan?.toUpperCase() === "PRO" && (
   <div className="bg-green-500/10 border border-green-500 rounded-xl px-3 py-1">
@@ -439,31 +439,12 @@ router.push('/');
   )}
 </div>
 
-<p
-  className={
-    darkMode
-      ? 'text-gray-400 mb-4'
-      : 'text-gray-600 mb-4'
-  }
->
-  Paste a video transcript, blog article, podcast, social post, or idea.
-  Get YouTube Shorts, TikTok scripts, Instagram captions, X threads,
-  LinkedIn posts, hashtags, and content ideas instantly.
-</p>
-
 <div className="mb-5 text-sm text-gray-300">
   ✓ YouTube Shorts • TikTok Scripts • Instagram Captions •
   X Threads • LinkedIn Posts • Hashtags • Content Ideas
 </div>
 
 <div className="flex items-center gap-3 mb-4">
-
-  <button
-    onClick={() => setDarkMode(!darkMode)}
-    className="bg-gray-700 text-white px-4 py-2 rounded-xl"
-  >
-    {darkMode ? "☀ Light Mode" : "🌙 Dark Mode"}
-  </button>
 
   {plan !== 'PRO' && (
   <button
@@ -476,6 +457,21 @@ router.push('/');
 
 </div>
 
+<div className="mb-6 bg-gradient-to-r from-purple-900/40 to-indigo-900/30 border border-purple-500/20 rounded-3xl p-6">
+
+  <div className="flex justify-between items-center">
+
+    <div>
+
+      <p className="text-gray-400 mt-2">
+        Paste a video transcript, blog article, podcast, social post, or idea. Get YouTube Shorts, TikTok scripts, Instagram captions, X threads, LinkedIn posts, hashtags, and content ideas instantly.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
         <div className="grid lg:grid-cols-3 gap-4 items-start">
 <div>
 
@@ -485,7 +481,7 @@ router.push('/');
   onClick={() => setInput("YouTube video transcript about AI productivity tools")}
   className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
 >
-  🎥 YouTube Video
+  ▶️ YouTube Video
 </button>
 
 <button
@@ -521,8 +517,8 @@ router.push('/');
             placeholder="Paste any content here..."
             className={
   darkMode
-    ? 'w-full h-[320px] bg-gray-800 border border-gray-700 rounded-xl p-4 text-white'
-    : 'w-full h-[320px] border-2 border-gray-300 rounded-xl p-4 text-black'
+    ? 'w-full h-[400px] bg-gray-800 border border-gray-700 rounded-xl p-4 text-white'
+    : 'w-full h-[400px] border-2 border-gray-300 rounded-xl p-4 text-black'
 }
           />
 
@@ -535,16 +531,13 @@ router.push('/');
 >
   {input.length}/500 karakter
 
-  <br />
-
-  Generations Left: {Math.max(0, dailyLimit - usedToday)}
 </div>
 
 </div>
 
           <div>
 
-  <div className="flex gap-2 justify-center mb-3 mt-[33px]">
+  <div className="mb-3 mt-6">
 
 {!loading && (
     <button
@@ -557,7 +550,7 @@ router.push('/');
     generate();
   }}
   disabled={usedToday >= dailyLimit}
-  className="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold"
+  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-cyan-500/30 transition"
 >
   {
     usedToday >= dailyLimit
@@ -579,7 +572,7 @@ router.push('/');
   </div>
 
   {loading ? (
-  <div className="w-full h-[320px] flex items-center justify-center">
+  <div className="w-full h-[400px] flex items-center justify-center">
     <div className="flex flex-col items-center gap-3">
       <div className="animate-spin h-10 w-10 rounded-full border-4 border-blue-500 border-t-transparent"></div>
       <span>Generating AI Content...</span>
@@ -591,8 +584,8 @@ router.push('/');
     readOnly
     className={
       darkMode
-        ? 'w-full h-[320px] bg-gray-800 border border-gray-700 rounded-xl p-4 text-white'
-        : 'w-full h-[320px] border-2 border-gray-300 rounded-xl p-4 text-black'
+        ? 'w-full h-[400px] bg-gray-800 border border-gray-700 rounded-xl p-4 text-white'
+        : 'w-full h-[400px] border-2 border-gray-300 rounded-xl p-4 text-black'
     }
   />
 )}
@@ -610,11 +603,9 @@ Character: {charCount}
 Read Time: {estimatedMinutes}m {estimatedSeconds}s
 </div>
 </div>
-    <div className={
-  darkMode
-    ? 'border border-gray-700 rounded-xl p-4 bg-gray-800 h-[320px] mt-[85px]'
-    : 'border-2 border-gray-300 rounded-xl p-4 bg-gray-50 h-[320px] mt-[85px]'
-}>
+
+    <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 h-[400px]
+    mt-[83px]">
 
             <div className="flex justify-between items-center mb-3">
 
@@ -717,7 +708,7 @@ Read Time: {estimatedMinutes}m {estimatedSeconds}s
           <button
   onClick={downloadTxt}
   disabled={!output.trim()}
-  className="bg-purple-600 text-white px-6 py-3 rounded-xl font-bold"
+  className="bg-gradient-to-r from-purple-500 to-indigo-800 text-white px-6 py-3 rounded-xl font-bold"
 >
   Download TXT
 </button>

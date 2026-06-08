@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
 export default function DashboardPage() {
+  
   const router = useRouter();
 
   const [inputText, setInputText] = useState('');
@@ -115,11 +116,11 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow">
+    <div className="min-h-screen bg-[#050816] text-white">
+      <nav className="border-b border-gray-800 bg-[#050816]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-indigo-600">
-            TextRewrite AI
+            AI Content Repurposer
           </h1>
 
           <div className="flex items-center gap-4">
@@ -162,56 +163,140 @@ export default function DashboardPage() {
         </div>
       </nav>
 
-      <main className="max-w-5xl mx-auto p-6">
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">
-            Rewrite Text With AI
-          </h2>
+      <main className="max-w-7xl mx-auto p-6">
 
-          <textarea
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder="Paste your text here..."
-            className="w-full h-48 border border-gray-300 rounded-xl p-4 text-gray-800"
-          />
+  <div className="mb-8">
+    <h1 className="text-5xl font-bold text-white">
+      Repurpose Any Content Into
+      <span className="text-purple-500">
+        {' '}Viral Posts
+      </span>
+      {' '}Instantly
+    </h1>
 
-          <div className="mt-5">
-            <select
-              value={style}
-              onChange={(e) => setStyle(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl p-3 text-gray-800"
-            >
-              <option value="formal">Formal</option>
-              <option value="santai">Casual</option>
-              <option value="ringkas">Short</option>
-              <option value="kreatif">Creative</option>
-            </select>
-          </div>
+    <p className="text-gray-400 mt-4 text-lg">
+      Paste your content once. Get multiple platform-ready content in seconds.
+    </p>
+  </div>
 
-          <button
-            onClick={rewriteText}
-            disabled={loading}
-            className="w-full mt-6 bg-indigo-600 text-white py-3 rounded-xl"
-          >
-            {loading ? 'Loading...' : '✨ Rewrite Text'}
-          </button>
+  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-8">
+
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+      YouTube Shorts
+    </div>
+
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+      TikTok Scripts
+    </div>
+
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+      Instagram
+    </div>
+
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+      X Threads
+    </div>
+
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+      LinkedIn
+    </div>
+
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+      Hashtags
+    </div>
+
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+      Calendar
+    </div>
+
+  </div>
+
+  <div className="grid lg:grid-cols-3 gap-6">
+
+    <div className="lg:col-span-2 bg-gray-900 border border-gray-800 rounded-3xl p-6">
+
+      <h2 className="text-xl font-bold mb-4 text-white">
+        Paste Your Content
+      </h2>
+
+      <textarea
+        value={inputText}
+        onChange={(e) => setInputText(e.target.value)}
+        placeholder="Paste any content here..."
+        className="w-full h-[350px] bg-gray-950 border border-gray-700 rounded-2xl p-4 text-white"
+      />
+
+      <div className="grid md:grid-cols-2 gap-4 mt-5">
+
+        <select
+          value={style}
+          onChange={(e) => setStyle(e.target.value)}
+          className="bg-gray-950 border border-gray-700 rounded-xl p-3 text-white"
+        >
+          <option value="formal">Formal</option>
+          <option value="santai">Casual</option>
+          <option value="ringkas">Short</option>
+          <option value="kreatif">Creative</option>
+        </select>
+
+        <button
+          onClick={rewriteText}
+          disabled={loading}
+          className="bg-purple-600 hover:bg-purple-500 text-white py-3 rounded-xl font-bold"
+        >
+          {loading ? 'Loading...' : 'Generate Content'}
+        </button>
+
+      </div>
+
+    </div>
+
+    <div className="bg-gray-900 border border-gray-800 rounded-3xl p-6">
+
+      <h2 className="text-xl font-bold text-white mb-4">
+        Account
+      </h2>
+
+      <div className="space-y-3">
+
+        <div className="bg-gray-950 border border-gray-700 rounded-xl p-3">
+          Plan: {plan}
         </div>
 
-        {outputText && (
-          <div className="bg-white rounded-2xl shadow-lg p-6 mt-8">
-            <button
-              onClick={salinHasil}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg mb-4"
-            >
-              Copy Result
-            </button>
+        <div className="bg-gray-950 border border-gray-700 rounded-xl p-3">
+          Remaining Words: {remainingWords}
+        </div>
 
-            <div className="bg-gray-50 border rounded-xl p-4 whitespace-pre-wrap text-gray-800">
-              {outputText}
-            </div>
+        {expiresAt && (
+          <div className="bg-gray-950 border border-gray-700 rounded-xl p-3">
+            Expires: {expiresAt}
           </div>
         )}
-      </main>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  {outputText && (
+    <div className="bg-gray-900 border border-gray-800 rounded-3xl p-6 mt-6">
+
+      <button
+        onClick={salinHasil}
+        className="bg-green-600 text-white px-4 py-2 rounded-xl mb-4"
+      >
+        Copy Result
+      </button>
+
+      <div className="bg-gray-950 border border-gray-700 rounded-2xl p-4 whitespace-pre-wrap text-white">
+        {outputText}
+      </div>
+
+    </div>
+  )}
+
+</main>
     </div>
   );
 }

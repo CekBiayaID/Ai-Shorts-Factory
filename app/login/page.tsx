@@ -78,7 +78,6 @@ const blockedDomains = [
   "throwawaymail.com",
   "tempail.com",
   "tixpad.com"
-  "snocv.com"
 ];
 
 const domain = email.split("@")[1]?.toLowerCase();

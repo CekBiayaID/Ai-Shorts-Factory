@@ -10,7 +10,8 @@ export async function POST(request: Request) {
   try {
     const {
       topic,
-      userId
+      userId,
+      tool
     } = await request.json();
 
     console.log("USER ID =", userId);
@@ -24,6 +25,25 @@ const profileResult = await supabaseAdmin
 console.log(profileResult.data);
 
 const profile = profileResult.data;
+
+const today = new Date()
+  .toISOString()
+  .split("T")[0];
+
+if (
+  profile &&
+  profile.last_used !== today
+) {
+  await supabaseAdmin
+    .from("profiles")
+    .update({
+      daily_used: 0,
+      last_used: today
+    })
+    .eq("id", userId);
+
+  profile.daily_used = 0;
+}
 
 if (!profile) {
   console.log("PROFILE NULL");
@@ -156,7 +176,10 @@ const output =
     await supabaseAdmin
   .from("profiles")
   .update({
-    daily_used: profile.daily_used + 1
+    daily_used: profile.daily_used + 1,
+    last_used: new Date()
+      .toISOString()
+      .split("T")[0]
   })
   .eq("id", userId);
 
