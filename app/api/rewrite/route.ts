@@ -92,7 +92,7 @@ IMPORTANT:
 Use the same language as the user's input.
 Do not translate unless requested.
 
-You are an AI Content Repurposing Expert.
+You are an Repurpose Content Expert.
 
 Repurpose the following content/topic into a complete short-form content package:
 

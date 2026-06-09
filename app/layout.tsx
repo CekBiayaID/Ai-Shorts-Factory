@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Content Repurposer",
+  title: "Repurposer Content",
   description: "Turn Any Content Into Shorts, Titles, Descriptions And Hashtags In Seconds.",
 };
 
