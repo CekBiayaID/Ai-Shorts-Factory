@@ -395,19 +395,19 @@ if (profile.last_reset !== today) {
           </a>
           <button
   onClick={() => {
-    setInput("YouTube video transcript about AI productivity tools");
+    setInput("YouTube video transcript about Content marketing strategies");
 
     setOutput(`🎥 Video Summary
 
-This video discusses AI productivity tools that help automate daily tasks.
+This video discusses content marketing strategies that help businesses grow their audience.
 
 Key Points:
-• AI saves time
+• Automation saves time
 • Automation increases efficiency
 • Content repurposing improves reach
 
 Takeaway:
-Use AI tools to work smarter and scale content creation.`);
+Use Repurpose tools to work smarter and scale content creation.`);
   }}
   className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
 >
@@ -829,8 +829,9 @@ Ready for publishing.`);
             <div className="flex gap-6">
               <a href="/privacy" className="hover:text-gray-300">Privacy</a>
               <a href="/terms" className="hover:text-gray-300">Terms</a>
+              <a href="/refund" className="hover:text-gray-300">Refund</a>
               <a href="/faq" className="hover:text-gray-300">FAQ</a>
-              <a href="/contact" className="hover:text-gray-300">Contact</a>
+              <a href="/contact" className="hover:text-gray-300">Contact</a>  
             </div>
             <div className="flex items-center gap-2">
               <span>English</span>
