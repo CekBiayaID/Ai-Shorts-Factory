@@ -533,7 +533,8 @@ Ready for publishing.`);
 
       <main className="flex-1 overflow-y-auto p-6">
         <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
+          
+          <div className="flex items-center gap-4 ml-10">
             {plan === "PRO" && expiresAt && (
               <div className="bg-green-500/10 border border-green-500 rounded-xl px-3 py-1">
                 <div className="text-green-400 font-bold text-sm">⭐ PRO ACTIVE</div>
@@ -601,6 +602,7 @@ Ready for publishing.`);
              className="rounded-xl"
             />
             <div>
+              
               <h2 className="text-2xl font-bold">Welcome to RepurposeContent</h2>
               <p className="text-gray-300">Transform existing content into blog posts, social media captions, summaries and marketing copy.
              </p>
