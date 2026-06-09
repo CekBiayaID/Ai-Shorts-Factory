@@ -7,9 +7,10 @@ import {
   Paragraph
 } from 'docx';
 import { saveAs } from 'file-saver';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase'
+import Image from "next/image";
 
 type HistoryItem = {
   id: number;
@@ -25,63 +26,136 @@ export default function HomePage() {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
-const [darkMode, setDarkMode] = useState(true);
-const [search, setSearch] = useState('');
+  const [search, setSearch] = useState('');
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [controller, setController] = useState<AbortController | null>(null);
   const [dailyLimit, setDailyLimit] = useState(3);
   const [usedToday, setUsedToday] = useState(0);
   const [expiresAt, setExpiresAt] = useState("")
+  const [resetTimeLeft, setResetTimeLeft] = useState("00:00:00")
+
+  // --- DAILY LIMIT & TIMER SYSTEM ---
+  const getNextResetTime = useCallback(() => {
+    const now = new Date();
+    const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+    return nextMidnight.getTime();
+  }, []);
+
+  const resetDailyLimit = useCallback(async (userId: string) => {
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ 
+          daily_used: 0,
+          last_reset: new Date().toISOString().split("T")[0]
+        })
+        .eq("id", userId);
+
+      if (!error) {
+        setUsedToday(0); 
+      } else {
+      }
+
+    } catch (err) {
+    }
+  }, []);
+
+  const updateTimerDisplay = useCallback(() => {
+    const resetTime = getNextResetTime();
+    const now = new Date().getTime();
+    const diffMs = resetTime - now;
+
+    if (diffMs <= 0) {
+      setResetTimeLeft("00:00:00");
+      return;
+    }
+
+    const h = Math.floor(diffMs / (1000 * 60 * 60));
+    const m = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    const s = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+    setResetTimeLeft(
+      `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`
+    );
+  }, [getNextResetTime]);
+
+  const checkAndInitLimit = useCallback(async () => {
+    if (!isLoggedIn) return;
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) return;
+
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("daily_used, last_reset, plan")
+      .eq("id", session.user.id)
+      .single();
+
+    if (error || !profile) {
+      console.error("❌ Profile not found:", error);
+      return;
+    }
+
+   const today = new Date().toISOString().split("T")[0];
+
+if (profile.last_reset !== today) {
+  await resetDailyLimit(session.user.id);
+} else {
+  setUsedToday(profile.daily_used || 0);
+}
+
+    updateTimerDisplay();
+  }, [isLoggedIn, resetDailyLimit, updateTimerDisplay]);
 
   useEffect(() => {
-  supabase.auth.getSession().then(async ({ data }) => {
-    setIsLoggedIn(!!data.session);
+    if (!isLoggedIn) return;
+    checkAndInitLimit();
+    const timerInterval = setInterval(updateTimerDisplay, 1000);
+    return () => clearInterval(timerInterval);
+  }, [isLoggedIn, checkAndInitLimit, updateTimerDisplay]);
 
-    if (data.session?.user) {
-      await loadHistory(data.session.user.id)
-      console.log("LOGIN EMAIL:", data.session.user.email);
-      console.log("LOGIN USER:", data.session.user);
 
-     const result = await supabase
-  .from("profiles")
-  .select("*")
-  .eq("email", data.session.user.email)
-  
-  console.log(result.data);
+  // --- USER INITIALIZATION ---
+  useEffect(() => {
+    const initUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsLoggedIn(!!session);
 
-const profile = result.data?.[0];
-console.log("SESSION ID:", data.session.user.id);
-console.log("QUERY RESULTS:", result.data);
-console.log("PROFILE ERROR:", result.error);
+      if (!session?.user) return;
 
-      if (profile) {
-        setPlan(profile.plan?.toUpperCase() || 'FREE');
-        setExpiresAt(profile.expires_at || "")
-        setUsedToday(profile.daily_used || 0);
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("daily_used, plan, expires_at, last_reset")
+        .eq("id", session.user.id)
+        .single();
 
-        if (profile.plan === 'pro') {
-          setDailyLimit(100);
-        } else {
-          setDailyLimit(3);
-        }
+      if (error || !profile) {
+        console.error("❌ Failed to load profile:", error);
+        return;
       }
-    }
-  });
-}, []);
+
+      const now = new Date();
+      const today = new Date().toISOString().split("T")[0];
+
+      setUsedToday(profile.daily_used || 0);
+
+      setPlan(profile.plan?.toUpperCase() || 'FREE');
+      setExpiresAt(profile.expires_at || "");
+      setDailyLimit(profile.plan === 'pro' ? 100 : 3);
+
+      await loadHistory(session.user.id);
+    };
+
+    initUser();
+  }, []);
+
 
   useEffect(() => {
     try {
       const savedHistory = localStorage.getItem('history');
-
       if (!savedHistory) return;
-
       const parsed = JSON.parse(savedHistory);
-
-      if (
-        Array.isArray(parsed) &&
-        parsed.length > 0 &&
-        typeof parsed[0] === 'object'
-      ) {
+      if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'object') {
         setHistory(parsed);
       } else {
         localStorage.removeItem('history');
@@ -92,672 +166,530 @@ console.log("PROFILE ERROR:", result.error);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(
-      'history',
-      JSON.stringify(history)
-    );
+    localStorage.setItem('history', JSON.stringify(history));
   }, [history]);
 
-const loadHistory = async (userId: string) => {
-  const { data } = await supabase
-    .from("history")
-    .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
+  const loadHistory = async (userId: string) => {
+    const { data } = await supabase
+      .from("history")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
 
-  if (data) {
-    setHistory(
-  data.map(item => ({
-    id: item.id,
-    topic: item.topic,
-    result: item.result,
-    createdAt: new Date(
-      item.created_at
-    ).toLocaleString()
-  }))
-);
+    if (data) {
+      setHistory(
+        data.map(item => ({
+          id: item.id,
+          topic: item.topic,
+          result: item.result,
+          createdAt: new Date(item.created_at).toLocaleString()
+        }))
+      );
+    }
+  };
+
+  const stopGenerating = () => {
+    controller?.abort();
+    setLoading(false);
+    setOutput("Generation stopped.");
   }
-};
 
-const stopGenerating = () => {
-  controller?.abort();
-  setLoading(false);
-  setOutput("Generation stopped.");
-}
 
+  // --- GENERATE FUNCTION (FIXED DATABASE UPDATE) ---
   const generate = async () => {
     if (!isLoggedIn) {
-    alert("Please login first");
-    router.push("/login");
-    return;
-  }
+      alert("Please login first");
+      router.push("/login");
+      return;
+    }
 
     if (loading) return;
     if (!input.trim()) return;
 
-if (plan !== "PRO" && usedToday >= dailyLimit) {
-  alert("Daily Limit Reached. Upgrade to Pro...");
-  router.push("/pricing");
-  return;
-}
+    if (plan !== "PRO" && usedToday >= dailyLimit) {
+      alert("Daily Limit Reached. Upgrade to Pro to get more generations.");
+      router.push("/pricing");
+      return;
+    }
 
     setLoading(true);
     setOutput('Repurposing Content...');
 
     try {
       const abortController = new AbortController();
-setController(abortController);
+      setController(abortController);
       const session = await supabase.auth.getSession();
+      const userId = session.data.session?.user.id;
 
-      console.log(
-  "USER ID:",
-  session.data.session?.user.id
-);
+      if (!userId) throw new Error("User not found");
 
-const response = await fetch("/api/rewrite", {
-  signal: abortController.signal,
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    topic: input,
-    userId: session.data.session?.user.id
-  }),
-});
+      const response = await fetch("/api/rewrite", {
+        signal: abortController.signal,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic: input, userId }),
+      });
 
       const data = await response.json();
-console.log(data);
+      if (data?.error) throw new Error(data.message);
 
-if (data?.error) {
-  throw new Error(data.message);
-}
+      const results = data?.hasil || 'No Results';
+      setOutput(results);
 
-const results =
-  data?.hasil || 'No Results';
-
-setOutput(results);
-
-const { data: profileData } = await supabase
-  .from("profiles")
-  .select("daily_used")
-  .eq(
-    "email",
-    session.data.session?.user.email
-  )
-  .single();
-
-if (profileData) {
-  setUsedToday(profileData.daily_used);
-}
-
-if (
+      if (
   plan !== "PRO" &&
-  profileData &&
-  profileData.daily_used >= dailyLimit
+  usedToday + 1 >= dailyLimit
 ) {
   setTimeout(() => {
     alert(
       "🎉 You've used all 3 free generations today.\n\nUpgrade to Pro for up to 100 generations per day."
     );
-
     router.push("/pricing");
   }, 500);
 }
 
-await supabase
-  .from("history")
-  .insert({
-    user_id: session.data.session?.user.id,
-    topic: input,
-    result: results
-  });
+      await supabase
+        .from("history")
+        .insert({
+          user_id: userId,
+          topic: input,
+          result: results
+        });
 
       setHistory((prev) => [
-  {
-    id: Date.now(),
-    topic: input,
-    result: results,
-    createdAt: new Date().toLocaleString(),
-  },
-  ...prev,
-]);
-   } catch (error: any) {
-
-  if (error?.name === "AbortError") {
-    setOutput("Generation stopped.");
-    return;
-  }
-
-  console.error(error);
-
-  setOutput(
-    "Service temporarily unavailable. Please try again in a few minutes."
-  );
-}
+        {
+          id: Date.now(),
+          topic: input,
+          result: results,
+          createdAt: new Date().toLocaleString(),
+        },
+        ...prev,
+      ]);
+    } catch (error: any) {
+      if (error?.name === "AbortError") {
+        setOutput("Generation stopped.");
+        return;
+      }
+      console.error("❌ Generation error:", error);
+      setOutput("Service temporarily unavailable. Please try again in a few minutes.");
+    }
 
     setLoading(false);
   };
 
+
   const downloadPdf = () => {
-  if (!output) return;
-
-  const pdf = new jsPDF();
-
-  pdf.setFontSize(16);
-  pdf.text('AI Content Repurposer', 10, 10);
-
-  pdf.setFontSize(11);
-
-  const lines = pdf.splitTextToSize(
-    output,
-    180
-  );
-
-  pdf.text(lines, 10, 20);
-
-  pdf.save('ai-content-output.pdf');
-};
+    if (!output) return;
+    const pdf = new jsPDF();
+    pdf.setFontSize(16);
+    pdf.text('AI Content Repurposer', 10, 10);
+    pdf.setFontSize(11);
+    const lines = pdf.splitTextToSize(output, 180);
+    pdf.text(lines, 10, 20);
+    pdf.save('ai-content-output.pdf');
+  };
   
-const downloadTxt = () => {
-    const blob = new Blob([output], {
-      type: 'text/plain;charset=utf-8',
-    });
-
+  const downloadTxt = () => {
+    const blob = new Blob([output], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
-
     const a = document.createElement('a');
     a.href = url;
     a.download = 'ai-content-output.txt';
     a.click();
-
     URL.revokeObjectURL(url);
   };
 
   const downloadDocx = async () => {
-  if (!output) return;
+    if (!output) return;
+    const doc = new Document({
+      sections: [
+        {
+          children: [
+            new Paragraph('AI Content Repurposer'),
+            new Paragraph(''),
+            new Paragraph(output),
+          ],
+        },
+      ],
+    });
+    const blob = await Packer.toBlob(doc);
+    saveAs(blob, 'ai-content-output.docx');
+  };
 
-  const doc = new Document({
-    sections: [
-      {
-        children: [
-          new Paragraph('AI Content Repurposer'),
-          new Paragraph(''),
-          new Paragraph(output),
-        ],
-      },
-    ],
-  });
-
-  const blob = await Packer.toBlob(doc);
-
-  saveAs(blob, 'ai-content-output.docx');
-};
-
-const clearInput = () => {
-  setInput('');
-};
-
-const clearOutput = () => {
-  setOutput('');
-  localStorage.removeItem('lastOutput');
-};
+  const clearInput = () => setInput('');
+  const clearOutput = () => {
+    setOutput('');
+    localStorage.removeItem('lastOutput');
+  };
 
   const clearHistory = async () => {
-  if (!confirm('Delete All History?')) return;
+    if (!confirm('Delete All History?')) return;
+    const session = await supabase.auth.getSession();
+    await supabase.from("history").delete().eq("user_id", session.data.session?.user.id);
+    setHistory([]);
+    localStorage.removeItem("history");
+  };
 
-  const session =
-    await supabase.auth.getSession();
-
-  await supabase
-    .from("history")
-    .delete()
-    .eq(
-      "user_id",
-      session.data.session?.user.id
-    );
-
-  setHistory([]);
-  localStorage.removeItem("history");
-};
-
-const deleteHistoryItem = async (
-  id: number
-) => {
-
-  await supabase
-    .from("history")
-    .delete()
-    .eq("id", id);
-
-  setHistory(
-    history.filter(
-      item => item.id !== id
-    )
-  );
-};
+  const deleteHistoryItem = async (id: number) => {
+    await supabase.from("history").delete().eq("id", id);
+    setHistory(history.filter(item => item.id !== id));
+  };
 
   const charCount = output.length;
-
-const wordCount =
-  output.trim() === ''
-    ? 0
-    : output.trim().split(/\s+/).length;
-
-    const estimatedMinutes = Math.floor(wordCount / 150);
-
-const estimatedSeconds = Math.floor(
-  ((wordCount % 150) / 150) * 60
-);
-
-const filteredHistory = history.filter(
-  (item) =>
-    item.topic
-      .toLowerCase()
-      .includes(search.toLowerCase())
-);
+  const wordCount = output.trim() === '' ? 0 : output.trim().split(/\s+/).length;
+  const estimatedMinutes = Math.floor(wordCount / 150);
+  const estimatedSeconds = Math.floor(((wordCount % 150) / 150) * 60);
+  const filteredHistory = history.filter(item => item.topic.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <main
-  className={
-    darkMode
-      ? 'min-h-screen bg-[#050816] p-6'
-      : 'min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6'
-  }
->
-      <div
-  className={
-    darkMode
-      ? 'max-w-7xl mx-auto bg-[#0B1220] rounded-3xl shadow-xl p-6 text-white'
-      : 'max-w-7xl mx-auto bg-white rounded-3xl shadow-xl p-6'
-  }
->
-       <div className="flex justify-between items-center mb-3">
-  <h1 className="text-4xl font-black bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
-  AI Content Repurposer
-</h1>
+    <div className="flex h-screen overflow-hidden bg-[#0B101E] text-gray-100 font-sans">
+      {/* Sidebar Navigation */}
+      <aside className="w-64 bg-[#121829] border-r border-[#1E293B] flex flex-col">
+        <div className="p-5 border-b border-[#1E293B]">
+          <div className="flex items-center gap-2">
+            <Image
+              src="/logo.png"
+               alt="RepurposeAI"
+                 width={46}
+                   height={46}
+                className="rounded-lg"
+              />
+            <span className="text-xl font-bold">RepurposeAI</span>
+            <span className="bg-[#4F46E5]/20 text-[#4F46E5] px-2 py-0.5 rounded text-xs font-semibold">
+              {plan === "PRO" ? "PRO" : "FREE"}
+            </span>
+          </div>
+        </div>
 
-  {plan?.toUpperCase() === "PRO" && (
-  <div className="bg-green-500/10 border border-green-500 rounded-xl px-3 py-1">
-    <div className="text-green-400 font-bold">
-      ⭐ PRO ACTIVE
-    </div>
+        <nav className="p-4 flex-1">
+          <a href="#" className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#4F46E5]/15 text-[#4F46E5] mb-2">
+            <i className="fa fa-home w-5 text-center"></i>
+            <span>Dashboard</span>
+          </a>
+          <button 
+            onClick={() => setInput("YouTube video transcript about AI productivity tools")}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
+          >
+            <i className="fa fa-youtube-play w-5 text-center"></i>
+            <span>YouTube Video</span>
+          </button>
+          <button 
+            onClick={() => setInput("Blog article about personal finance and saving money")}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
+          >
+            <i className="fa fa-file-text-o w-5 text-center"></i>
+            <span>Blog Article</span>
+          </button>
+          <button 
+            onClick={() => setInput("Podcast episode discussing startup growth strategies")}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
+          >
+            <i className="fa fa-microphone w-5 text-center"></i>
+            <span>Podcast</span>
+          </button>
+          <button 
+            onClick={() => setInput("Twitter thread about passive income ideas")}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-6 text-[#DB2777] text-left"
+          >
+            <i className="fa fa-share-alt w-5 text-center"></i>
+            <span>Social Post</span>
+          </button>
 
-    {expiresAt && (
-      <div className="text-yellow-300 text-xs">
-        {Math.ceil(
-          (new Date(expiresAt).getTime() - Date.now()) /
-          (1000 * 60 * 60 * 24)
-        )} Days Left
-      </div>
-    )}
-  </div>
-  )}
-
-  {isLoggedIn ? (
-    <button
-      onClick={async () => {
-        console.log('LOGOUT CLICKED')
-        await supabase.auth.signOut();
-
-setIsLoggedIn(false);
-
-setInput('');
-setOutput('');
-setHistory([]);
-
-setPlan('free');
-setUsedToday(0);
-setExpiresAt('');
-
-localStorage.removeItem('lastInput');
-localStorage.removeItem('lastOutput');
-localStorage.removeItem('history');
-
-router.push('/');
-      }}
-      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-bold"
-    >
-      Logout
-    </button>
-  ) : (
-    <div className="flex gap-3">
-      <button
-        onClick={() => router.push('/login')}
-        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl font-bold"
-      >
-        Login
-      </button>
-
-      <button
-        onClick={() => router.push('/login')}
-        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl font-bold"
-      >
-        Sign Up
-      </button>
-    </div>
-  )}
-</div>
-
-<div className="mb-5 text-sm text-gray-300">
-  ✓ YouTube Shorts • TikTok Scripts • Instagram Captions •
-  X Threads • LinkedIn Posts • Hashtags • Content Ideas
-</div>
-
-<div className="flex items-center gap-3 mb-4">
-
-  {plan !== 'PRO' && (
-  <button
-    onClick={() => router.push('/pricing')}
-    className="bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded-xl font-bold"
-  >
-    🚀 Upgrade To PRO
-  </button>
-)}
-
-</div>
-
-<div className="mb-6 bg-gradient-to-r from-purple-900/40 to-indigo-900/30 border border-purple-500/20 rounded-3xl p-6">
-
-  <div className="flex justify-between items-center">
-
-    <div>
-
-      <p className="text-gray-400 mt-2">
-        Paste a video transcript, blog article, podcast, social post, or idea. Get YouTube Shorts, TikTok scripts, Instagram captions, X threads, LinkedIn posts, hashtags, and content ideas instantly.
-      </p>
-    </div>
-
-  </div>
-
-</div>
-
-        <div className="grid lg:grid-cols-3 gap-4 items-start">
-<div>
-
-  <div className="flex flex-wrap gap-2 mb-3">
-
-      <button
-  onClick={() => setInput("YouTube video transcript about AI productivity tools")}
-  className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
->
-  ▶️ YouTube Video
-</button>
-
-<button
-  onClick={() => setInput("Blog article about personal finance and saving money")}
-  className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
->
-  📝 Blog Article
-</button>
-
-<button
-  onClick={() => setInput("Podcast episode discussing startup growth strategies")}
-  className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
->
-  🎙 Podcast
-</button>
-
-<button
-  onClick={() => setInput("Twitter thread about passive income ideas")}
-  className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
->
-  🐦 Social Post
-</button>
-  </div>
-
-          <textarea
-            value={input}
-            maxLength={500}
-            onChange={(e) => {
-  if (e.target.value.length <= 500) {
-    setInput(e.target.value);
-  }
-}}
-            placeholder="Paste any content here..."
-            className={
-  darkMode
-    ? 'w-full h-[400px] bg-gray-800 border border-gray-700 rounded-xl p-4 text-white'
-    : 'w-full h-[400px] border-2 border-gray-300 rounded-xl p-4 text-black'
-}
-          />
-
-<div
-  className={
-    darkMode
-      ? 'text-gray-400 text-sm mt-2'
-      : 'text-gray-600 text-sm mt-2'
-  }
->
-  {input.length}/500 karakter
-
-</div>
-
-</div>
-
-          <div>
-
-  <div className="mb-3 mt-6">
-
-{!loading && (
-    <button
-  onClick={() => {
-    if (!isLoggedIn) {
-      router.push("/login");
-      return;
-    }
-
-    generate();
-  }}
-  disabled={usedToday >= dailyLimit}
-  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-cyan-500/30 transition"
->
-  {
-    usedToday >= dailyLimit
-      ? "Daily Limit Reached"
-      : "Repurpose Content"
-  }
-</button>
-)}
-
-    {loading && (
-      <button
-        onClick={stopGenerating}
-        className="bg-red-600 text-white px-6 py-2 rounded-xl font-bold"
-      >
-        Stop
-      </button>
-    )}
-
-  </div>
-
-  {loading ? (
-  <div className="w-full h-[400px] flex items-center justify-center">
-    <div className="flex flex-col items-center gap-3">
-      <div className="animate-spin h-10 w-10 rounded-full border-4 border-blue-500 border-t-transparent"></div>
-      <span>Generating AI Content...</span>
-    </div>
-  </div>
-) : (
-  <textarea
-    value={output}
-    readOnly
-    className={
-      darkMode
-        ? 'w-full h-[400px] bg-gray-800 border border-gray-700 rounded-xl p-4 text-white'
-        : 'w-full h-[400px] border-2 border-gray-300 rounded-xl p-4 text-black'
-    }
-  />
-)}
-          <div
-  className={
-    darkMode
-      ? 'text-gray-300 text-sm mt-2'
-      : 'text-gray-600 text-sm mt-2'
-  }
->
-  Words: {wordCount}
-{' | '}
-Character: {charCount}
-{' | '}
-Read Time: {estimatedMinutes}m {estimatedSeconds}s
-</div>
-</div>
-
-    <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 h-[400px]
-    mt-[83px]">
-
-            <div className="flex justify-between items-center mb-3">
-
-               <h3
-  className={
-    darkMode
-      ? 'font-bold text-white'
-      : 'font-bold text-black'
-  }
->
-  History ({history.length})
-</h3>
-
-              <button
-                onClick={clearHistory}
-                className="bg-red-500 text-white px-3 py-1 rounded"
+          <div className="mb-6">
+            <p className="text-xs text-gray-500 uppercase mb-2 px-4">ACCOUNT</p>
+            {plan !== "PRO" && (
+              <button 
+                onClick={() => router.push("/pricing")}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-[#FBBF24] text-left"
               >
-                Erase
+                <i className="fa fa-crown w-5 text-center"></i>
+                <span>Upgrade to PRO</span>
+                <span className="ml-auto bg-[#FBBF24]/20 text-[#FBBF24] px-2 py-0.5 rounded text-xs">PRO</span>
               </button>
-
-            </div>
-
-<input
-  type="text"
-  placeholder="Search History..."
-  value={search}
-  onChange={(e) => setSearch(e.target.value)}
-  className={
-    darkMode
-      ? 'w-full mb-3 bg-gray-700 text-white p-2 rounded'
-      : 'w-full mb-3 border p-2 rounded text-black placeholder-gray-500'
-  }
-/>
-
-            <div className="space-y-2 max-h-[260px] overflow-auto">
-
-              {filteredHistory.length === 0 && (
-                <p className="text-gray-500">
-                  No History Yet
-                </p>
-              )}
-
-              {filteredHistory.map((item, index) => (
-                <div
-                  key={index}
-                  onClick={() => {
-                    setOutput(item.result);
-                    setInput(item.topic);
-                  }}
-                  className="bg-white border rounded-lg p-2 text-black text-sm cursor-pointer hover:bg-gray-100"
-                >
-                  <div className="flex justify-between">
-  <div className="font-bold">
-  REPURPOSE
-</div>
-
-  <button
-    onClick={(e) => {
-      e.stopPropagation();
-      deleteHistoryItem(item.id);
-    }}
-    className="text-red-500 font-bold"
-  >
-    ❌
-  </button>
-</div>
-
-                  <div className="truncate">
-                    {item.topic}
-                  </div>
-
-                  <div className="text-xs text-gray-500">
-                    {item.createdAt}
-                  </div>
-                </div>
-              ))}
-
-            </div>
-
+            )}
           </div>
 
+          <div className="bg-gray-800/40 rounded-lg p-4">
+            <p className="text-xs text-gray-400 uppercase mb-3">USAGE</p>
+            <div className="flex justify-between items-center mb-2">
+              <span className="font-medium text-gray-200">Daily Limit</span>
+              <span className="text-blue-400 text-sm font-semibold">
+                {usedToday >= dailyLimit ? "Reached" : `${usedToday}/${dailyLimit}`}
+              </span>
+            </div>
+            <p className="text-sm text-gray-400 mb-2">
+              {usedToday >= dailyLimit 
+                ? "You've used all your daily limit." 
+                : `${dailyLimit - usedToday} generations remaining today.`
+              }
+            </p>
+            <p className="text-xs text-gray-500">Resets in: {resetTimeLeft}</p>
+          </div>
+        </nav>
+      </aside>
+
+      <main className="flex-1 overflow-y-auto p-6">
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-4">
+            {plan === "PRO" && expiresAt && (
+              <div className="bg-green-500/10 border border-green-500 rounded-xl px-3 py-1">
+                <div className="text-green-400 font-bold text-sm">⭐ PRO ACTIVE</div>
+                <div className="text-yellow-300 text-xs">
+                  {Math.ceil((new Date(expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} Days Left
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="flex items-center gap-3">
+            {usedToday >= dailyLimit && (
+              <span className="flex items-center gap-2 text-blue-400 bg-blue-400/10 px-3 py-1.5 rounded-lg text-sm">
+                <i className="fa fa-check-circle"></i>
+                Daily Limit Reached
+              </span>
+            )}
+
+            {isLoggedIn ? (
+              <button
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  setIsLoggedIn(false);
+                  setInput('');
+                  setOutput('');
+                  setHistory([]);
+                  setPlan('free');
+                  setUsedToday(0);
+                  setExpiresAt('');
+                  localStorage.removeItem('lastInput');
+                  localStorage.removeItem('lastOutput');
+                  localStorage.removeItem('history');
+                  router.push('/');
+                }}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition"
+              >
+                Logout
+              </button>
+            ) : (
+              <div className="flex gap-3">
+                <button
+                  onClick={() => router.push('/login')}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold transition"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => router.push('/login')}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold transition"
+                >
+                  Sign Up
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="flex flex-wrap gap-4 mt-6">
-
-          <button
-  onClick={clearInput}
-  className="bg-yellow-600 text-white px-6 py-3 rounded-xl font-bold"
->
-  Clear Input
-</button>
-
-          <button
-  onClick={clearOutput}
-  className="bg-gray-600 text-white px-6 py-3 rounded-xl font-bold"
->
-  Clear Output
-</button>
-
-          <button
-  onClick={downloadTxt}
-  disabled={!output.trim()}
-  className="bg-gradient-to-r from-purple-500 to-indigo-800 text-white px-6 py-3 rounded-xl font-bold"
->
-  Download TXT
-</button>
-
-<button
-  onClick={() => {
-    if (plan !== "PRO") {
-      router.push("/pricing");
-      return;
-    }
-
-    downloadDocx();
-  }}
-  className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold"
->
-  {plan === "PRO"
-    ? "Download DOCX"
-    : "🔒 Download DOCX"}
-</button>
-
-<button
-  onClick={() => {
-    if (plan !== "PRO") {
-      router.push("/pricing");
-      return;
-    }
-
-    downloadPdf();
-  }}
-  className="bg-red-600 text-white px-6 py-3 rounded-xl font-bold"
->
-  {plan === "PRO"
-    ? "Download PDF"
-    : "🔒 Download PDF"}
-</button>
-
-      </div>
-
-        <div className="text-center mt-10 text-gray-500">
-          <a href="/privacy">Privacy</a>
-          {" | "}
-          <a href="/terms">Terms</a>
-          {" | "}
-          <a href="/faq">FAQ</a>
-          {" | "}
-          <a href="/contact">Contact</a>
+        <div className="bg-gradient-to-r from-[#1E1B4B] to-[#121829] rounded-xl p-6 mb-8 border border-[#1E293B]">
+          <div className="flex items-center gap-4">
+            <Image
+             src="/logo.png"
+              alt="RepurposeAI"
+               width={48}
+                height={48}
+             className="rounded-xl"
+            />
+            <div>
+              <h2 className="text-2xl font-bold">Welcome to RepurposeAI</h2>
+              <p className="text-gray-300">Repurpose Once, publish everywhere transform videos, blogs, podcasts and social posts
+into viral content in seconds.</p>
+            </div>
+          </div>
         </div>
 
-      </div>
-    </main>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="bg-[#121829] rounded-xl p-6 border border-[#1E293B]">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="w-8 h-8 rounded-full bg-[#4F46E5]/20 text-[#4F46E5] flex items-center justify-center font-bold">1</span>
+              <h3 className="text-lg font-semibold">Input Content</h3>
+            </div>
+            <textarea 
+              value={input}
+              maxLength={500}
+              onChange={(e) => {
+                if (e.target.value.length <= 500) setInput(e.target.value);
+              }}
+              placeholder="Paste any content here..." 
+              className="w-full h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 text-gray-200 focus:outline-none focus:ring-1 focus:ring-[#4F46E5]/50 resize-none"
+            ></textarea>
+            <div className="flex justify-between items-center mt-3 text-sm text-gray-400">
+              <span>{input.length} / 500</span>
+              <span>Words: {wordCount} | Characters: {charCount} | Read Time: {estimatedMinutes}m {estimatedSeconds}s</span>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button 
+                onClick={clearInput}
+                className="flex-1 bg-gray-800 hover:bg-gray-700 px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 transition text-gray-300"
+              >
+                <i className="fa fa-trash"></i> Clear Input
+              </button>
+              <button 
+                onClick={clearOutput}
+                className="flex-1 bg-gray-800 hover:bg-gray-700 px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 transition text-gray-300"
+              >
+                <i className="fa fa-times"></i> Clear Output
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-[#121829] rounded-xl p-6 border border-[#1E293B]">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="w-8 h-8 rounded-full bg-[#7C3AED]/20 text-[#7C3AED] flex items-center justify-center font-bold">2</span>
+              <h3 className="text-lg font-semibold">Output</h3>
+            </div>
+            {loading ? (
+              <div className="w-full h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 flex flex-col items-center justify-center text-center">
+                <div className="animate-spin h-10 w-10 rounded-full border-4 border-[#7C3AED] border-t-transparent mb-3"></div>
+                <span>Generating AI Content...</span>
+                <button
+                  onClick={stopGenerating}
+                  className="mt-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+                >
+                  Stop
+                </button>
+              </div>
+            ) : (
+              <textarea 
+                value={output}
+                readOnly
+                placeholder="Your generated content will appear here."
+                className="w-full h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 text-gray-200 focus:outline-none resize-none"
+              ></textarea>
+            )}
+            <div className="grid grid-cols-3 gap-3 mt-6">
+              <button 
+                onClick={downloadTxt}
+                disabled={!output.trim()}
+                className="bg-gradient-to-r from-[#6D28D9] to-[#4F46E5] hover:opacity-90 disabled:opacity-40 px-3 py-2.5 rounded-lg flex items-center justify-center gap-2 transition font-medium text-white"
+              >
+                <i className="fa fa-download"></i> TXT
+              </button>
+              <button 
+                onClick={() => {
+                  if (plan !== "PRO") {
+                    router.push("/pricing");
+                    return;
+                  }
+                  downloadDocx();
+                }}
+                className="bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] hover:opacity-90 disabled:opacity-40 px-3 py-2.5 rounded-lg flex items-center justify-center gap-2 transition font-medium text-white"
+              >
+                <i className="fa fa-download"></i> {plan === "PRO" ? "DOCX" : "🔒 DOCX"}
+              </button>
+              <button 
+                onClick={() => {
+                  if (plan !== "PRO") {
+                    router.push("/pricing");
+                    return;
+                  }
+                  downloadPdf();
+                }}
+                className="bg-gradient-to-r from-[#BE185D] to-[#9D174D] hover:opacity-90 disabled:opacity-40 px-3 py-2.5 rounded-lg flex items-center justify-center gap-2 transition font-medium text-white"
+              >
+                <i className="fa fa-download"></i> {plan === "PRO" ? "PDF" : "🔒 PDF"}
+              </button>
+            </div>
+            <div className="mt-4">
+              {!loading && (
+                <button
+                  onClick={generate}
+                  disabled={usedToday >= dailyLimit || !input.trim()}
+                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50 text-white font-bold py-2.5 rounded-lg transition"
+                >
+                  {usedToday >= dailyLimit ? "Daily Limit Reached" : "Repurpose Content"}
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="bg-[#121829] rounded-xl p-6 border border-[#1E293B]">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <span className="w-8 h-8 rounded-full bg-[#DB2777]/20 text-[#DB2777] flex items-center justify-center font-bold">3</span>
+                <h3 className="text-lg font-semibold">History ({history.length})</h3>
+              </div>
+              <button 
+                onClick={clearHistory}
+                className="bg-red-900/30 text-red-400 px-3 py-1.5 rounded hover:bg-red-900/50 transition text-sm"
+              >
+                Clear
+              </button>
+            </div>
+            <div className="relative mb-4">
+              <input 
+                type="text" 
+                placeholder="Search history..." 
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full bg-[#0B101E] border border-[#1E293B] rounded-lg p-3 pl-10 text-gray-200 focus:outline-none focus:ring-1 focus:ring-[#DB2777]/50"
+              />
+              <i className="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+            </div>
+            <div className="w-full h-52 bg-[#0B101E] border border-[#1E293B] rounded-lg p-3 overflow-y-auto">
+              {filteredHistory.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-center">
+                  <div className="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center mb-3">
+                    <i className="fa fa-clock-o text-gray-500 text-xl"></i>
+                  </div>
+                  <p className="text-gray-300 font-medium">No history yet</p>
+                  <p className="text-sm text-gray-400 mt-1">Your generated content will appear here.</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {filteredHistory.map((item) => (
+                    <div 
+                      key={item.id}
+                      onClick={() => {
+                        setInput(item.topic);
+                        setOutput(item.result);
+                      }}
+                      className="bg-gray-800 rounded-lg p-3 cursor-pointer hover:bg-gray-750 transition"
+                    >
+                      <div className="flex justify-between items-start mb-1">
+                        <span className="font-medium text-sm truncate max-w-[180px]">{item.topic}</span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteHistoryItem(item.id);
+                          }}
+                          className="text-red-400 hover:text-red-300 text-xs"
+                        >
+                          ❌
+                        </button>
+                      </div>
+                      <p className="text-xs text-gray-400">{item.createdAt}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <footer className="mt-10 pt-6 border-t border-[#1E293B] text-sm text-gray-500">
+          <div className="flex justify-between items-center">
+            <p>&copy; 2026 RepurposeAI. All rights reserved.</p>
+            <div className="flex gap-6">
+              <a href="/privacy" className="hover:text-gray-300">Privacy</a>
+              <a href="/terms" className="hover:text-gray-300">Terms</a>
+              <a href="/faq" className="hover:text-gray-300">FAQ</a>
+              <a href="/contact" className="hover:text-gray-300">Contact</a>
+            </div>
+            <div className="flex items-center gap-2">
+              <span>English</span>
+              <i className="fa fa-globe"></i>
+            </div>
+          </div>
+        </footer>
+      </main>
+    </div>
   );
 }

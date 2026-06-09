@@ -32,13 +32,13 @@ const today = new Date()
 
 if (
   profile &&
-  profile.last_used !== today
+  profile.last_reset !== today
 ) {
   await supabaseAdmin
     .from("profiles")
     .update({
       daily_used: 0,
-      last_used: today
+      last_reset: today
     })
     .eq("id", userId);
 
@@ -64,8 +64,8 @@ const limit =
 if (profile.daily_used >= limit) {
   return NextResponse.json(
     {
-      hasil:
-        "Daily limit reached. Upgrade to Pro."
+      error: true,
+      message: "Daily limit reached. Upgrade to Pro."
     },
     {
       status: 403
@@ -149,9 +149,7 @@ Create 30 relevant hashtags.
 Create 10 additional content ideas based on this topic.
 `;
 
-console.log("USER =", userId);
-
-   let result;
+   let result: any = null;
 
 for (let i = 0; i < 3; i++) {
   try {
@@ -159,6 +157,8 @@ for (let i = 0; i < 3; i++) {
       model: "gemini-2.5-flash",
       contents: prompt,
     });
+
+    console.log(result);
 
     break;
   } catch (err: any) {
@@ -170,18 +170,24 @@ for (let i = 0; i < 3; i++) {
   }
 }
 
-const output =
-  result?.text || "No Results";
+    const output = result.text;
 
-    await supabaseAdmin
+    const updateResult = await supabaseAdmin
   .from("profiles")
   .update({
-    daily_used: profile.daily_used + 1,
-    last_used: new Date()
+    daily_used: Number(profile.daily_used || 0) + 1,
+    last_reset: new Date()
       .toISOString()
       .split("T")[0]
   })
-  .eq("id", userId);
+  .eq("id", userId)
+  .select();
+
+  const check = await supabaseAdmin
+  .from("profiles")
+  .select("daily_used")
+  .eq("id", userId)
+  .single();
 
     return NextResponse.json({
   hasil: output,
