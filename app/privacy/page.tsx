@@ -6,7 +6,7 @@ export default function PrivacyPage() {
       </h1>
 
       <p>
-        AI Content Repurposer respects your privacy.
+        RepurposerContent respects your privacy.
       </p>
 
       <p>
@@ -14,7 +14,7 @@ export default function PrivacyPage() {
       </p>
 
       <p>
-        User inputs may be processed to generate AI content.
+        User inputs may be processed to provide content transformation and repurposing services.
       </p>
 
       <p>
