@@ -99,6 +99,35 @@ setErrorMsg('✅ Account created successfully! Please check your email.');
 
 };
 
+const forgotPassword = async () => {
+  if (!email) {
+    setErrorMsg("Please enter your email address first.");
+    return;
+  }
+
+  setLoading(true);
+
+  const { error } =
+    await supabase.auth.resetPasswordForEmail(
+      email,
+      {
+        redirectTo:
+          `${window.location.origin}/reset-password`,
+      }
+    );
+
+  setLoading(false);
+
+  if (error) {
+    setErrorMsg(error.message);
+    return;
+  }
+
+  setErrorMsg(
+    "✅ Password reset link has been sent to your email."
+  );
+};
+
 return (
 <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
 <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
@@ -175,6 +204,13 @@ Repurposer Content
           Sign Up
         </button>
       </p>
+      <button
+    type="button"
+    onClick={forgotPassword}
+    className="mt-3 text-sm text-indigo-600 hover:underline"
+  >
+    Forgot Password?
+  </button>
     </div>
   </div>
 </div>
