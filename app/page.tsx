@@ -214,7 +214,7 @@ if (profile.last_reset !== today) {
     }
 
     setLoading(true);
-    setOutput('Repurposing Content...');
+    setOutput('ReContent...');
 
     try {
       const abortController = new AbortController();
@@ -283,11 +283,11 @@ if (profile.last_reset !== today) {
     if (!output) return;
     const pdf = new jsPDF();
     pdf.setFontSize(16);
-    pdf.text('AI Content Repurposer', 10, 10);
+    pdf.text('ReContent', 10, 10);
     pdf.setFontSize(11);
     const lines = pdf.splitTextToSize(output, 180);
     pdf.text(lines, 10, 20);
-    pdf.save('ai-content-output.pdf');
+    pdf.save('re-content-output.pdf');
   };
   
   const downloadTxt = () => {
@@ -295,7 +295,7 @@ if (profile.last_reset !== today) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'ai-content-output.txt';
+    a.download = 're-content-output.txt';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -306,7 +306,7 @@ if (profile.last_reset !== today) {
       sections: [
         {
           children: [
-            new Paragraph('AI Content Repurposer'),
+            new Paragraph('ReContent'),
             new Paragraph(''),
             new Paragraph(output),
           ],
@@ -314,7 +314,7 @@ if (profile.last_reset !== today) {
       ],
     });
     const blob = await Packer.toBlob(doc);
-    saveAs(blob, 'ai-content-output.docx');
+    saveAs(blob, 're-content-output.docx');
   };
 
   const clearInput = () => setInput('');
@@ -371,12 +371,12 @@ if (profile.last_reset !== today) {
           <div className="flex items-center gap-2">
             <Image
               src="/logo.png"
-               alt="RepurposeAI"
-                 width={46}
-                   height={46}
+               alt="ReContent"
+                 width={40}
+                   height={40}
                 className="rounded-lg"
               />
-            <span className="text-xl font-bold">RepurposeAI</span>
+            <span className="text-base font-bold">ReContent</span>
             <span className="bg-[#4F46E5]/20 text-[#4F46E5] px-2 py-0.5 rounded text-xs font-semibold">
               {plan === "PRO" ? "PRO" : "FREE"}
             </span>
@@ -388,34 +388,115 @@ if (profile.last_reset !== today) {
             <i className="fa fa-home w-5 text-center"></i>
             <span>Dashboard</span>
           </a>
-          <button 
-            onClick={() => setInput("YouTube video transcript about AI productivity tools")}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
-          >
-            <i className="fa fa-youtube-play w-5 text-center"></i>
-            <span>YouTube Video</span>
-          </button>
-          <button 
-            onClick={() => setInput("Blog article about personal finance and saving money")}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
-          >
-            <i className="fa fa-file-text-o w-5 text-center"></i>
-            <span>Blog Article</span>
-          </button>
-          <button 
-            onClick={() => setInput("Podcast episode discussing startup growth strategies")}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
-          >
-            <i className="fa fa-microphone w-5 text-center"></i>
-            <span>Podcast</span>
-          </button>
-          <button 
-            onClick={() => setInput("Twitter thread about passive income ideas")}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-6 text-[#DB2777] text-left"
-          >
-            <i className="fa fa-share-alt w-5 text-center"></i>
-            <span>Social Post</span>
-          </button>
+          <button
+  onClick={() => {
+    setInput("YouTube video transcript about AI productivity tools");
+
+    setOutput(`🎥 Video Summary
+
+This video discusses AI productivity tools that help automate daily tasks.
+
+Key Points:
+• AI saves time
+• Automation increases efficiency
+• Content repurposing improves reach
+
+Takeaway:
+Use AI tools to work smarter and scale content creation.`);
+  }}
+  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
+>
+  <i className="fa fa-youtube-play w-5 text-center"></i>
+  <span>YouTube Video</span>
+</button>
+
+<button
+  onClick={() => {
+    setInput("Blog article about personal finance and saving money");
+
+    setOutput(`📝 Blog Summary
+
+Personal finance is about managing money wisely.
+
+Benefits:
+• Better budgeting
+• Increased savings
+• Reduced stress
+
+Conclusion:
+Small financial habits create long-term wealth.`);
+  }}
+  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
+>
+  <i className="fa fa-file-text-o w-5 text-center"></i>
+  <span>Blog Article</span>
+</button>
+
+<button
+  onClick={() => {
+    setInput("Podcast episode discussing startup growth strategies");
+
+    setOutput(`🎙 Podcast Highlights
+
+Topics Discussed:
+• Startup validation
+• Customer acquisition
+• Product-market fit
+
+Key Insight:
+Focus on solving customer problems before scaling.`);
+  }}
+  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
+>
+  <i className="fa fa-microphone w-5 text-center"></i>
+  <span>Podcast</span>
+</button>
+
+<button
+  onClick={() => {
+    setInput("Twitter thread about passive income ideas");
+
+    setOutput(`🚀 Social Media Caption
+
+Passive income is built over time.
+
+Focus on:
+• Digital products
+• Content creation
+• Investments
+
+#Business #Growth #PassiveIncome`);
+  }}
+  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
+>
+  <i className="fa fa-share-alt w-5 text-center"></i>
+  <span>Social Post</span>
+</button>
+
+<button
+  onClick={() => {
+    setInput("The weather today is very nice and suitable for outdoor activities.");
+
+    setOutput(`✍️ Content Rewrite
+
+Original Text:
+Artificial Intelligence helps businesses automate repetitive tasks.
+
+Rewritten Version:
+Artificial Intelligence enables organizations to streamline repetitive processes, improve efficiency, and focus on higher-value activities.
+
+Improvements:
+• More professional tone
+• Better readability
+• Enhanced clarity
+
+Ready for publishing.`);
+}}
+  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
+>
+  <i className="fa fa-pencil w-5 text-center"></i>
+  <span>Content Rewrite</span>
+</button>
 
           <div className="mb-6">
             <p className="text-xs text-gray-500 uppercase mb-2 px-4">ACCOUNT</p>
@@ -514,15 +595,15 @@ if (profile.last_reset !== today) {
           <div className="flex items-center gap-4">
             <Image
              src="/logo.png"
-              alt="RepurposeAI"
+              alt="ReContent"
                width={48}
                 height={48}
              className="rounded-xl"
             />
             <div>
-              <h2 className="text-2xl font-bold">Welcome to RepurposeAI</h2>
-              <p className="text-gray-300">Repurpose Once, publish everywhere transform videos, blogs, podcasts and social posts
-into viral content in seconds.</p>
+              <h2 className="text-2xl font-bold">Welcome to RepurposeContent</h2>
+              <p className="text-gray-300">Transform existing content into blog posts, social media captions, summaries and marketing copy.
+             </p>
             </div>
           </div>
         </div>
@@ -570,7 +651,7 @@ into viral content in seconds.</p>
             {loading ? (
               <div className="w-full h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 flex flex-col items-center justify-center text-center">
                 <div className="animate-spin h-10 w-10 rounded-full border-4 border-[#7C3AED] border-t-transparent mb-3"></div>
-                <span>Generating AI Content...</span>
+                <span>Generating Content...</span>
                 <button
                   onClick={stopGenerating}
                   className="mt-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
@@ -582,7 +663,7 @@ into viral content in seconds.</p>
               <textarea 
                 value={output}
                 readOnly
-                placeholder="Your generated content will appear here."
+                placeholder="Your repurposed content will appear here."
                 className="w-full h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 text-gray-200 focus:outline-none resize-none"
               ></textarea>
             )}
@@ -698,7 +779,7 @@ into viral content in seconds.</p>
 
         <footer className="mt-10 pt-6 border-t border-[#1E293B] text-sm text-gray-500">
           <div className="flex justify-between items-center">
-            <p>&copy; 2026 RepurposeAI. All rights reserved.</p>
+            <p>&copy; 2026 ReContent. All rights reserved.</p>
             <div className="flex gap-6">
               <a href="/privacy" className="hover:text-gray-300">Privacy</a>
               <a href="/terms" className="hover:text-gray-300">Terms</a>
