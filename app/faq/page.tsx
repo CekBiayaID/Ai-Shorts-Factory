@@ -11,12 +11,10 @@ export default function FAQPage() {
 
           <div>
             <h2 className="font-bold text-xl">
-              What is AI Content Repurposer?
+              What is RepurposeContent?
             </h2>
             <p className="text-gray-300">
-              AI Content Repurposer helps creators transform videos,
-              blog posts, podcasts, transcripts, and social media content
-              into new content formats instantly.
+              RepurposeContent helps creators transform videos, blog posts, podcasts, transcripts, and social media content into new content formats.
             </p>
           </div>
 
@@ -36,7 +34,7 @@ export default function FAQPage() {
             </h2>
             <p className="text-gray-300">
               Free users get 3 generations per day.
-              Pro users get up to 100 generations per day.
+              Pro users get up to 50 generations per day.
             </p>
           </div>
 
