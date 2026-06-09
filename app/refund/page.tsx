@@ -11,21 +11,31 @@ export default function RefundPage() {
         </p>
 
         <p className="mb-4">
-          Subscription fees are generally non-refundable.
+          Customers may request a refund within 14 days of
+          the original purchase date.
+        </p>
+
+        <p className="mb-4">
+          Refund requests will be reviewed and processed in
+          accordance with Paddle's Buyer Terms and applicable
+          consumer protection laws.
+        </p>
+
+        <p className="mb-4">
+          After 14 days from the purchase date, refunds may
+          no longer be available except where required by law.
+        </p>
+
+        <p className="mb-4">
           If you believe you were charged in error or
           experienced a billing issue, please contact our
-          support team for assistance.
+          support team as soon as possible.
         </p>
 
         <p className="mb-4">
-          Refund requests are reviewed on a case-by-case
-          basis and may be granted at our discretion.
-        </p>
-
-        <p className="mb-4">
-          To request assistance regarding billing or
-          refunds, please contact us through our contact
-          page.
+          To request a refund, please contact us through our
+          contact page and include your purchase email and
+          transaction details.
         </p>
 
         <p>
