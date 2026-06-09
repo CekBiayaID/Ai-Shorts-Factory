@@ -33,6 +33,7 @@ export default function HomePage() {
   const [usedToday, setUsedToday] = useState(0);
   const [expiresAt, setExpiresAt] = useState("")
   const [resetTimeLeft, setResetTimeLeft] = useState("00:00:00")
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // --- DAILY LIMIT & TIMER SYSTEM ---
   const getNextResetTime = useCallback(() => {
@@ -343,8 +344,29 @@ if (profile.last_reset !== today) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#0B101E] text-gray-100 font-sans">
+      {sidebarOpen && (
+       <div
+        className="fixed inset-0 bg-black/50"
+         onClick={() => setSidebarOpen(false)}
+         />
+          )}
+          <button
+           onClick={() => setSidebarOpen(true)}
+            className="fixed top-6 left-6 z-50"
+            >
+              ☰
+            </button>
       {/* Sidebar Navigation */}
-      <aside className="w-64 bg-[#121829] border-r border-[#1E293B] flex flex-col">
+      <aside
+  className={`
+    fixed left-0 top-0 h-full w-64
+    bg-[#121829]
+    z-50
+    transition-transform duration-300
+    ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+  `}
+>
+
         <div className="p-5 border-b border-[#1E293B]">
           <div className="flex items-center gap-2">
             <Image
