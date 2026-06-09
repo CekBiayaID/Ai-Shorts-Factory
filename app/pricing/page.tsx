@@ -121,7 +121,7 @@ export default function PricingPage() {
           </div>
 
           <ul className="mt-6 space-y-3">
-            <li>✓ 100 Generations Per Day</li>
+            <li>✓ High Daily Limit</li>
             <li>✓ PDF Export</li>
             <li>✓ DOCX Export</li>
             <li>✓ Priority Support</li>

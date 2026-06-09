@@ -142,7 +142,7 @@ if (profile.last_reset !== today) {
 
       setPlan(profile.plan?.toUpperCase() || 'FREE');
       setExpiresAt(profile.expires_at || "");
-      setDailyLimit(profile.plan === 'pro' ? 100 : 3);
+      setDailyLimit(profile.plan === 'pro' ? 50 : 3);
 
       await loadHistory(session.user.id);
     };
@@ -209,7 +209,7 @@ if (profile.last_reset !== today) {
 
     if (usedToday >= dailyLimit) {
   if (plan === "PRO") {
-    alert("You've reached your daily limit of 100 generations.");
+    alert("You've reached your daily limit of 50 generations.");
   } else {
     alert("Daily Limit Reached. Upgrade to Pro to get more generations.");
     router.push("/pricing");
@@ -517,7 +517,7 @@ Ready for publishing.`);
             )}
           </div>
 
-          <div className="bg-gray-800/40 rounded-lg p-4">
+          {/* <div className="bg-gray-800/40 rounded-lg p-4">
             <p className="text-xs text-gray-400 uppercase mb-3">USAGE</p>
             <div className="flex justify-between items-center mb-2">
               <span className="font-medium text-gray-200">Daily Limit</span>
@@ -532,7 +532,46 @@ Ready for publishing.`);
               }
             </p>
             <p className="text-xs text-gray-500">Resets in: {resetTimeLeft}</p>
-          </div>
+          </div> */}
+
+          <div className="bg-gray-800/40 rounded-lg p-4">
+  <p className="text-xs text-gray-400 uppercase mb-3">USAGE</p>
+
+  {plan === "PRO" ? (
+    <>
+      <p className="font-medium text-gray-200">PRO Plan</p>
+
+      <p className="text-sm text-green-400 mt-2">
+        ✓ High Daily Usage
+      </p>
+
+      <p className="text-xs text-gray-500 mt-3">
+        Resets in: {resetTimeLeft}
+      </p>
+    </>
+  ) : (
+    <>
+      <div className="flex justify-between items-center mb-2">
+        <span className="font-medium text-gray-200">
+          Daily Usage
+        </span>
+
+        <span className="text-blue-400 text-sm font-semibold">
+          {usedToday}/{dailyLimit}
+        </span>
+      </div>
+
+      <p className="text-sm text-gray-400 mb-2">
+        {dailyLimit - usedToday} generations remaining today.
+      </p>
+
+      <p className="text-xs text-gray-500">
+        Resets in: {resetTimeLeft}
+      </p>
+    </>
+  )}
+</div>
+
         </nav>
       </aside>
 
