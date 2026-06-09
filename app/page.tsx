@@ -207,11 +207,15 @@ if (profile.last_reset !== today) {
     if (loading) return;
     if (!input.trim()) return;
 
-    if (plan !== "PRO" && usedToday >= dailyLimit) {
-      alert("Daily Limit Reached. Upgrade to Pro to get more generations.");
-      router.push("/pricing");
-      return;
-    }
+    if (usedToday >= dailyLimit) {
+  if (plan === "PRO") {
+    alert("You've reached your daily limit of 100 generations.");
+  } else {
+    alert("Daily Limit Reached. Upgrade to Pro to get more generations.");
+    router.push("/pricing");
+  }
+    return;
+  }
 
     setLoading(true);
     setOutput('ReContent...');
@@ -236,6 +240,7 @@ if (profile.last_reset !== today) {
 
       const results = data?.hasil || 'No Results';
       setOutput(results);
+      setUsedToday(prev => prev + 1);
 
       if (
   plan !== "PRO" &&
