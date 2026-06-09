@@ -37,7 +37,7 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 rounded-xl shadow w-full max-w-md">
 
-        <h1 className="text-2xl font-bold mb-4">
+        <h1 className="text-2xl font-bold mb-4 text-black">
           Reset Password
         </h1>
 
@@ -46,7 +46,7 @@ export default function ResetPasswordPage() {
           placeholder="New Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full border p-2 rounded mb-3"
+          className="w-full border p-2 rounded mb-3 text-black placeholder-gray-500"
         />
 
         <input
@@ -54,7 +54,7 @@ export default function ResetPasswordPage() {
           placeholder="Confirm Password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="w-full border p-2 rounded mb-3"
+          className="w-full border p-2 rounded mb-3 text-black placeholder-gray-500"
         />
 
         <button
@@ -65,7 +65,7 @@ export default function ResetPasswordPage() {
         </button>
 
         {message && (
-          <p className="mt-3">{message}</p>
+          <p className="mt-3 text-black">{message}</p>
         )}
 
       </div>
