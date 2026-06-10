@@ -22,7 +22,7 @@ type HistoryItem = {
 export default function HomePage() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [plan, setPlan] = useState('free')
+  const [plan, setPlan] = useState('FREE')
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -140,15 +140,35 @@ if (profile.last_reset !== today) {
 
       setUsedToday(profile.daily_used || 0);
 
-      setPlan(profile.plan?.toUpperCase() || 'FREE');
-      setExpiresAt(profile.expires_at || "");
-      setDailyLimit(profile.plan === 'pro' ? 50 : 3);
+const currentPlan =
+  profile.plan?.toLowerCase();
 
-      await loadHistory(session.user.id);
+setPlan(
+  currentPlan === "pro"
+    ? "PRO"
+    : "FREE"
+);
+
+setExpiresAt(profile.expires_at || "");
+
+setDailyLimit(
+  currentPlan === "pro"
+    ? 50
+    : 3
+);
+
+await loadHistory(session.user.id);
     };
 
-    initUser();
-  }, []);
+   initUser();
+
+const interval = setInterval(() => {
+  initUser();
+}, 10000);
+
+return () => clearInterval(interval);
+
+}, []);
 
 
   useEffect(() => {
@@ -248,7 +268,7 @@ if (profile.last_reset !== today) {
 ) {
   setTimeout(() => {
     alert(
-      "🎉 You've used all 3 free generations today.\n\nUpgrade to Pro for up to 100 generations per day."
+      "🎉 You've used all 3 free generations today.\n\nUpgrade to Pro for up to 50 generations per day."
     );
     router.push("/pricing");
   }, 500);
@@ -617,7 +637,7 @@ Tone:
                   setInput('');
                   setOutput('');
                   setHistory([]);
-                  setPlan('free');
+                  setPlan('FREE');
                   setUsedToday(0);
                   setExpiresAt('');
                   localStorage.removeItem('lastInput');
