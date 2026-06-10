@@ -63,7 +63,7 @@ export default function PricingPage() {
       </h1>
 
       <p className="text-center text-gray-400 mb-12">
-        Unlock more AI generations and premium features.
+        Unlock more for generations and premium features.
       </p>
 
       <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -107,7 +107,7 @@ export default function PricingPage() {
 
           <div className="mt-4 text-sm">
             <p>
-              AI Content Repurposer Pro helps creators transform:
+              Repurposer Content Pro helps creators transform turn one piece of content into multiple high-performing formats:
             </p>
 
             <ul className="mt-2 space-y-1">
