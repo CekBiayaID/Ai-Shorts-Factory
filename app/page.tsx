@@ -725,14 +725,28 @@ Tone:
                   Stop
                 </button>
               </div>
-            ) : (
-              <textarea 
-                value={output}
-                readOnly
-                placeholder="Your repurposed content will appear here."
-                className="w-full h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 text-gray-200 focus:outline-none resize-none"
-              ></textarea>
-            )}
+          ) : !output ? (
+  <div className="w-full h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 text-gray-400">
+    <div className="font-semibold mb-3">
+      Example Output
+    </div>
+
+    <div>🐦 X Thread</div>
+    <div>💼 LinkedIn Post</div>
+    <div>📸 Instagram Caption</div>
+    <div>🏷️ Viral Hashtags</div>
+
+    <div className="mt-4 text-xm">
+      ✨ Your result appear here...
+    </div>
+  </div>
+) : (
+  <textarea
+    value={output}
+    readOnly
+    className="w-full h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 text-gray-200 focus:outline-none resize-none"
+  />
+)}
             <div className="grid grid-cols-3 gap-3 mt-6">
               <button 
                 onClick={downloadTxt}
