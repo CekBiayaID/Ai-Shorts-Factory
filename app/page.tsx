@@ -341,10 +341,6 @@ if (profile.last_reset !== today) {
     setHistory(history.filter(item => item.id !== id));
   };
 
-  const charCount = output.length;
-  const wordCount = output.trim() === '' ? 0 : output.trim().split(/\s+/).length;
-  const estimatedMinutes = Math.floor(wordCount / 150);
-  const estimatedSeconds = Math.floor(((wordCount % 150) / 150) * 60);
   const filteredHistory = history.filter(item => item.topic.toLowerCase().includes(search.toLowerCase()));
 
   return (
@@ -664,7 +660,7 @@ Tone:
             <div>
               
               <h2 className="text-2xl font-bold">Welcome to RepurposeContent</h2>
-              <p className="text-gray-300">Turn One Piece Of Content Into Weeks of Social Media Post.
+              <p className="text-gray-300">Create Viral Content For Every Platform With One Click.
                </p>
              <p className="text-gray-300">
               Convert videos, blogs and podcasts into X threads,
@@ -682,17 +678,13 @@ Tone:
             </div>
             <textarea 
               value={input}
-              maxLength={500}
+              maxLength={5000}
               onChange={(e) => {
-                if (e.target.value.length <= 500) setInput(e.target.value);
+                if (e.target.value.length <= 5000) setInput(e.target.value);
               }}
               placeholder="Paste any content here..." 
               className="w-full h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 text-gray-200 focus:outline-none focus:ring-1 focus:ring-[#4F46E5]/50 resize-none"
             ></textarea>
-            <div className="flex justify-between items-center mt-3 text-sm text-gray-400">
-              <span>{input.length} / 500</span>
-              <span>Words: {wordCount} | Characters: {charCount} | Read Time: {estimatedMinutes}m {estimatedSeconds}s</span>
-            </div>
             <div className="flex gap-3 mt-6">
               <button 
                 onClick={clearInput}

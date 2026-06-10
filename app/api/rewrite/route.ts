@@ -58,7 +58,7 @@ if (!profile) {
 
 const limit =
   profile.plan === "pro"
-    ? 100
+    ? 50
     : 3;
 
 if (profile.daily_used >= limit) {
@@ -80,74 +80,94 @@ if (profile.daily_used >= limit) {
   );
 }
 
-if (topic.length > 500) {
+if (topic.length > 5000) {
   return NextResponse.json(
-    { error: "Maximum 500 Characters Allowed" },
+    { error: "Maximum 5000 Characters Allowed" },
     { status: 400 }
   );
 }
 
-let prompt = `
+let prompt = "";
+
+const shortInput = topic.trim().length < 100;
+
+if (shortInput) {
+  prompt = `
 IMPORTANT:
 Use the same language as the user's input.
-Do not translate unless requested.
 
-You are an Repurpose Content Expert.
+Topic:
+${topic}
 
-Repurpose the following content/topic into a complete short-form content package:
+Format exactly:
+
+# VIRAL TITLES
+Create 5 highly clickable titles.
+
+# VIRAL HOOKS
+Create 5 attention-grabbing hooks.
+
+# INSTAGRAM CAPTION
+Create 1 caption.
+
+# X THREAD
+Create a thread with maximum 5 tweets.
+
+# HASHTAGS
+Create 15 hashtags.
+
+Keep total output under 500 words.
+`;
+} else {
+  prompt = `
+IMPORTANT:
+Use the same language as the user's input.
+
+You are a Repurpose Content Expert.
+
+Repurpose the following content:
 
 ${topic}
 
 Format exactly:
 
 # VIRAL TITLES
-
-Create 10 highly clickable YouTube titles.
+Create 5 highly clickable YouTube titles.
 
 # VIRAL HOOKS
-
-Create 10 attention-grabbing hooks.
+Create 5 attention-grabbing hooks.
 
 # SEO DESCRIPTION
-
 Create 1 SEO optimized description.
 
 # YOUTUBE SHORTS SCRIPT
-
 Create a complete 30-60 second YouTube Shorts script.
 
 # TIKTOK SCRIPT
-
 Create a complete viral TikTok version.
 
 # INSTAGRAM CAPTION
-
 Create an engaging Instagram caption.
 
 # X THREAD
-
 Create a Twitter/X thread.
 
 # LINKEDIN POST
-
 Create a professional LinkedIn post.
 
 # THUMBNAIL IDEAS
-
-Create 10 thumbnail ideas.
+Create 5 thumbnail ideas.
 
 # CALL TO ACTION
-
-Create 5 strong CTAs.
+Create 3 strong CTAs.
 
 # HASHTAGS
-
-Create 30 relevant hashtags.
+Create 15 relevant hashtags.
 
 # CONTENT IDEAS
-
-Create 10 additional content ideas based on this topic.
+Create 5 additional content ideas.
 `;
+}
 
    let result: any = null;
 
