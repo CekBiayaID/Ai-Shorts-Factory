@@ -397,85 +397,101 @@ if (profile.last_reset !== today) {
   onClick={() => {
     setInput("YouTube video transcript about Content marketing strategies");
 
-    setOutput(`🎥 Video Summary
+    setOutput(`🐦 X Thread
 
-This video discusses content marketing strategies that help businesses grow their audience.
+1/ Content marketing is not about creating more content.
 
-Key Points:
-• Automation saves time
-• Automation increases efficiency
-• Content repurposing improves reach
+It's about repurposing content smarter.
 
-Takeaway:
-Use Repurpose tools to work smarter and scale content creation.`);
+🧵
+
+2/ One YouTube video can become:
+• X Threads
+• LinkedIn Posts
+• Instagram Captions
+
+3/ Work once.
+Distribute everywhere.
+
+#ContentMarketing #CreatorEconomy`);
   }}
   className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
 >
   <i className="fa fa-youtube-play w-5 text-center"></i>
-  <span>YouTube Video</span>
+  <span>X Thread</span>
 </button>
 
 <button
   onClick={() => {
     setInput("Blog article about personal finance and saving money");
 
-    setOutput(`📝 Blog Summary
+    setOutput(`💼 LinkedIn Post
 
-Personal finance is about managing money wisely.
+Most people struggle with money not because they earn too little.
 
-Benefits:
-• Better budgeting
-• Increased savings
-• Reduced stress
+They struggle because they don't have a system.
 
-Conclusion:
-Small financial habits create long-term wealth.`);
+3 simple habits:
+
+✅ Track expenses
+✅ Save automatically
+✅ Invest consistently
+
+Small habits create long-term wealth.
+
+#PersonalFinance #Investing`);
   }}
   className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
 >
   <i className="fa fa-file-text-o w-5 text-center"></i>
-  <span>Blog Article</span>
+  <span>LinkedIn Post</span>
 </button>
 
 <button
   onClick={() => {
     setInput("Podcast episode discussing startup growth strategies");
 
-    setOutput(`🎙 Podcast Highlights
+    setOutput(`📸 Instagram Caption
 
-Topics Discussed:
-• Startup validation
-• Customer acquisition
-• Product-market fit
+Startup growth doesn't happen by accident.
 
-Key Insight:
-Focus on solving customer problems before scaling.`);
+Focus on:
+
+🚀 Product-Market Fit
+🚀 Customer Feedback
+🚀 Consistent Execution
+
+Success comes from solving real problems.
+
+#Startup #Business #Growth`);
   }}
   className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
 >
   <i className="fa fa-microphone w-5 text-center"></i>
-  <span>Podcast</span>
+  <span>Instagram Captions</span>
 </button>
 
 <button
   onClick={() => {
     setInput("Twitter thread about passive income ideas");
 
-    setOutput(`🚀 Social Media Caption
+    setOutput(`🏷️ Viral Hashtags
 
-Passive income is built over time.
+#PassiveIncome
+#OnlineBusiness
+#Entrepreneur
+#ContentCreator
+#FinancialFreedom
+#SideHustle
 
-Focus on:
-• Digital products
-• Content creation
-• Investments
+Suggested Title:
 
-#Business #Growth #PassiveIncome`);
+7 Passive Income Ideas You Can Start This Year`);
   }}
   className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
 >
   <i className="fa fa-share-alt w-5 text-center"></i>
-  <span>Social Post</span>
+  <span>Viral Hastags</span>
 </button>
 
 <button
@@ -484,23 +500,23 @@ Focus on:
 
     setOutput(`✍️ Content Rewrite
 
-Original Text:
-Artificial Intelligence helps businesses automate repetitive tasks.
+Original:
 
-Rewritten Version:
-Artificial Intelligence enables organizations to streamline repetitive processes, improve efficiency, and focus on higher-value activities.
+AI helps businesses automate repetitive tasks.
 
-Improvements:
-• More professional tone
-• Better readability
-• Enhanced clarity
+Rewritten:
 
-Ready for publishing.`);
+Artificial Intelligence enables organizations to streamline repetitive workflows, improve productivity, and focus resources on strategic growth initiatives.
+
+Tone:
+✅ Professional
+✅ Clear
+✅ Publish Ready`);
 }}
   className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 mb-2 text-gray-300 text-left"
 >
   <i className="fa fa-pencil w-5 text-center"></i>
-  <span>Content Rewrite</span>
+  <span>Content Rewriter</span>
 </button>
 
           <div className="mb-6">
@@ -648,8 +664,12 @@ Ready for publishing.`);
             <div>
               
               <h2 className="text-2xl font-bold">Welcome to RepurposeContent</h2>
-              <p className="text-gray-300">Transform existing content into blog posts, social media captions, summaries and marketing copy.
-             </p>
+              <p className="text-gray-300">Turn One Piece Of Content Into Weeks of Social Media Post.
+               </p>
+             <p className="text-gray-300">
+              Convert videos, blogs and podcasts into X threads,
+              LinkedIn posts, captions and hashtags in seconds.
+               </p>
             </div>
           </div>
         </div>
