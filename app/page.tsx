@@ -35,6 +35,7 @@ export default function HomePage() {
   const [resetTimeLeft, setResetTimeLeft] = useState("00:00:00")
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstalled, setIsInstalled] = useState(false);
 
   // --- DAILY LIMIT & TIMER SYSTEM ---
   const getNextResetTime = useCallback(() => {
@@ -202,6 +203,12 @@ return () => clearInterval(interval);
   return () => {
     window.removeEventListener("beforeinstallprompt", handler);
   };
+}, []);
+
+useEffect(() => {
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    setIsInstalled(true);
+  }
 }, []);
 
   const loadHistory = async (userId: string) => {
@@ -642,12 +649,14 @@ Tone:
           
           <div className="flex items-center gap-4 ml-10">
 
+{!isInstalled && (
 <button
   onClick={installApp}
   className="px-5 py-1 rounded-full text-green-400 text-sm hover:bg-green-500/10"
 >
   📱 Install App
 </button>
+)}
 
             {plan === "PRO" && expiresAt && (
               <div className="bg-green-500/10 border border-green-500 rounded-xl px-3 py-1">
