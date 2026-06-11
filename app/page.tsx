@@ -644,7 +644,7 @@ Tone:
 
 <button
   onClick={installApp}
-  className="px-5 py-1 rounded-full border border-green-500 text-green-400 text-sm hover:bg-green-500/10"
+  className="px-5 py-1 rounded-full text-green-400 text-sm hover:bg-green-500/10"
 >
   📱 Install App
 </button>
