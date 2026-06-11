@@ -57,7 +57,7 @@ if (!profile) {
 }
 
 const limit =
-  profile.plan === "pro"
+  profile.plan?.toLowerCase() === "pro"
     ? 50
     : 3;
 
