@@ -742,6 +742,9 @@ Tone:
             <div className="flex items-center gap-3 mb-4">
               <span className="w-8 h-8 rounded-full bg-[#4F46E5]/20 text-[#4F46E5] flex items-center justify-center font-bold">1</span>
               <h3 className="text-lg font-semibold">Input Content</h3>
+              <span className="text-xs bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-white px-3 py-1 rounded-full border border-cyan-400/30">
+               🌍 Multi-Language
+              </span>
             </div>
             <textarea 
               value={input}
@@ -925,10 +928,6 @@ Tone:
               <a href="/refund" className="hover:text-gray-300">Refund</a>
               <a href="/faq" className="hover:text-gray-300">FAQ</a>
               <a href="/contact" className="hover:text-gray-300">Contact</a>  
-            </div>
-            <div className="flex items-center gap-2">
-              <span>English</span>
-              <i className="fa fa-globe"></i>
             </div>
           </div>
         </footer>
