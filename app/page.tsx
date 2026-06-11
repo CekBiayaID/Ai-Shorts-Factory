@@ -376,7 +376,7 @@ return () => clearInterval(interval);
             className="fixed top-6 left-6 z-50"
             >
               ☰
-            </button>
+            </button>            
       {/* Sidebar Navigation */}
       <aside
   className={`
@@ -611,6 +611,11 @@ Tone:
         <div className="flex justify-between items-center mb-6">
           
           <div className="flex items-center gap-4 ml-10">
+
+<div className="px-5 py-1 rounded-full border border-green-500 text-green-400 text-sm">
+      📱 Mobile App Available
+    </div>
+
             {plan === "PRO" && expiresAt && (
               <div className="bg-green-500/10 border border-green-500 rounded-xl px-3 py-1">
                 <div className="text-green-400 font-bold text-sm">⭐ PRO ACTIVE</div>
