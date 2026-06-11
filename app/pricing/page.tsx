@@ -27,6 +27,7 @@ export default function PricingPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          userId: session.user.id,
           email: session.user.email,
         }),
       });

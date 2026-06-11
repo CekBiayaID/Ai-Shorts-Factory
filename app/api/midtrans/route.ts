@@ -11,8 +11,11 @@ export async function GET() {
   });
 }
 
-export async function POST() {
-  try {
+    export async function POST(request: Request) {
+    try {
+
+    const { userId, email } = await request.json();
+
     console.log(
       "MIDTRANS KEY:",
       process.env.MIDTRANS_SERVER_KEY
@@ -26,13 +29,15 @@ export async function POST() {
     });
 
     const transaction =
-      await snap.createTransaction({
-        transaction_details: {
-          order_id:
-            "ORDER-" + Date.now(),
-          gross_amount: 75000,
-        },
-      });
+  await snap.createTransaction({
+    transaction_details: {
+      order_id: `PRO|${userId}|${Date.now()}`,
+      gross_amount: 75000,
+    },
+    customer_details: {
+      email,
+    },
+  });
 
     return NextResponse.json({
       token: transaction.token,
