@@ -34,6 +34,7 @@ export default function HomePage() {
   const [expiresAt, setExpiresAt] = useState("")
   const [resetTimeLeft, setResetTimeLeft] = useState("00:00:00")
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   // --- DAILY LIMIT & TIMER SYSTEM ---
   const getNextResetTime = useCallback(() => {
@@ -190,6 +191,19 @@ return () => clearInterval(interval);
     localStorage.setItem('history', JSON.stringify(history));
   }, [history]);
 
+  useEffect(() => {
+  const handler = (e: any) => {
+    e.preventDefault();
+    setDeferredPrompt(e);
+  };
+
+  window.addEventListener("beforeinstallprompt", handler);
+
+  return () => {
+    window.removeEventListener("beforeinstallprompt", handler);
+  };
+}, []);
+
   const loadHistory = async (userId: string) => {
     const { data } = await supabase
       .from("history")
@@ -215,6 +229,22 @@ return () => clearInterval(interval);
     setOutput("Generation stopped.");
   }
 
+  const installApp = async () => {
+  if (!deferredPrompt) {
+    alert("Install app not available yet.");
+    return;
+  }
+
+  deferredPrompt.prompt();
+
+  const result = await deferredPrompt.userChoice;
+
+  if (result.outcome === "accepted") {
+    console.log("PWA Installed");
+  }
+
+  setDeferredPrompt(null);
+};
 
   // --- GENERATE FUNCTION (FIXED DATABASE UPDATE) ---
   const generate = async () => {
@@ -612,9 +642,12 @@ Tone:
           
           <div className="flex items-center gap-4 ml-10">
 
-<div className="px-5 py-1 rounded-full border border-green-500 text-green-400 text-sm">
-      📱 Mobile App Available
-    </div>
+<button
+  onClick={installApp}
+  className="px-5 py-1 rounded-full border border-green-500 text-green-400 text-sm hover:bg-green-500/10"
+>
+  📱 Install App
+</button>
 
             {plan === "PRO" && expiresAt && (
               <div className="bg-green-500/10 border border-green-500 rounded-xl px-3 py-1">
