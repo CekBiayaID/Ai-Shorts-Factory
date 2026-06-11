@@ -15,7 +15,15 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Repurposer Content",
-  description: "Turn Any Content Into Shorts, Titles, Descriptions And Hashtags In Seconds.",
+  description:
+    "Turn Any Content Into Shorts, Titles, Descriptions And Hashtags In Seconds.",
+
+  manifest: "/manifest.json",
+
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/icon-192.png",
+  },
 };
 
 export default function RootLayout({
