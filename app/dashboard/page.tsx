@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import toast from "react-hot-toast"
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -64,7 +65,7 @@ export default function DashboardPage() {
 
   const rewriteText = async () => {
     if (!inputText.trim()) {
-      alert('Please Enter Text First!');
+      toast.error('Please Enter Text First!');
       return;
     }
 
@@ -94,7 +95,7 @@ export default function DashboardPage() {
         Math.max(0, prev - inputText.length)
       );
     } catch (error: any) {
-      alert('❌ ' + error.message);
+      toast.error('❌ ' + error.message);
     }
 
     setLoading(false);
@@ -108,9 +109,9 @@ export default function DashboardPage() {
   const salinHasil = async () => {
     try {
       await navigator.clipboard.writeText(outputText);
-      alert('✅ Text Copied Successfully');
+      toast.success('✅ Text Copied Successfully');
     } catch {
-      alert('❌ Failed To Copy Text');
+      toast.error('❌ Failed To Copy Text');
     }
   };
 
