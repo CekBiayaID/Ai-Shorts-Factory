@@ -402,7 +402,7 @@ useEffect(() => {
           )}
           <button
            onClick={() => setSidebarOpen(true)}
-            className="fixed top-4 left-4 z-50 text-2xl"
+            className="fixed top-4 left-4 z-50 text-2xl bg-[#121829] px-2 rounded"
             >
               ☰
             </button>            
@@ -856,7 +856,7 @@ Tone:
               />
               <i className="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
             </div>
-            <div className="w-full h-52 bg-[#0B101E] border border-[#1E293B] rounded-lg p-3 overflow-y-auto">
+            <div className="w-full h-40 md:h-52 bg-[#0B101E] border border-[#1E293B] rounded-lg p-3 overflow-y-auto">
               {filteredHistory.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center">
                   <div className="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center mb-3">
@@ -898,7 +898,7 @@ Tone:
         </div>
 
         <footer className="mt-10 pt-6 border-t border-[#1E293B] text-sm text-gray-500">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center">
             <p>&copy; 2026 ReContent. All rights reserved.</p>
             <div className="flex flex-wrap justify-center gap-4">
               <a href="/privacy" className="hover:text-gray-300">Privacy</a>
