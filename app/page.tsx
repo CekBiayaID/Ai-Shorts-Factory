@@ -302,7 +302,7 @@ useEffect(() => {
   usedToday + 1 >= dailyLimit
 ) {
   setTimeout(() => {
-    toast.error(
+    toast.success(
       "🎉 You've used all 3 free generations today.\n\nUpgrade to Pro for up to 50 generations per day."
     );
     router.push("/pricing");
