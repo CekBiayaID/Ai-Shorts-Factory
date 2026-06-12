@@ -11,6 +11,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase'
 import Image from "next/image";
+import toast from "react-hot-toast"
 
 type HistoryItem = {
   id: number;
@@ -235,7 +236,7 @@ useEffect(() => {
 
   const installApp = async () => {
   if (!deferredPrompt) {
-    alert("Install app not available yet.");
+    toast.error("Install app not available yet.");
     return;
   }
 
@@ -253,7 +254,7 @@ useEffect(() => {
   // --- GENERATE FUNCTION (FIXED DATABASE UPDATE) ---
   const generate = async () => {
     if (!isLoggedIn) {
-      alert("Please login first");
+      toast.error("Please login to continue");
       router.push("/login");
       return;
     }
@@ -263,9 +264,9 @@ useEffect(() => {
 
     if (usedToday >= dailyLimit) {
   if (plan === "PRO") {
-    alert("You've reached your daily limit of 50 generations.");
+    toast.error("You've reached your daily limit of 50 generations.");
   } else {
-    alert("Daily Limit Reached. Upgrade to Pro to get more generations.");
+    toast.error("Daily Limit Reached. Upgrade to Pro to get more generations.");
     router.push("/pricing");
   }
     return;
@@ -301,7 +302,7 @@ useEffect(() => {
   usedToday + 1 >= dailyLimit
 ) {
   setTimeout(() => {
-    alert(
+    toast.error(
       "🎉 You've used all 3 free generations today.\n\nUpgrade to Pro for up to 50 generations per day."
     );
     router.push("/pricing");
