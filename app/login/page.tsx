@@ -123,7 +123,7 @@ password,
 
 if (error) {
   setLoading(false);
-  setErrorMsg('❌ Unable to create account');
+  setErrorMsg(error.message);
   console.error(error);
   return;
 }
