@@ -402,7 +402,7 @@ useEffect(() => {
           )}
           <button
            onClick={() => setSidebarOpen(true)}
-            className="fixed top-6 left-6 z-50"
+            className="fixed top-4 left-4 z-50 text-2xl"
             >
               ☰
             </button>            
@@ -636,15 +636,15 @@ Tone:
         </nav>
       </aside>
 
-      <main className="flex-1 overflow-y-auto p-6">
-        <div className="flex justify-between items-center mb-6">
+      <main className="flex-1 overflow-y-auto p-4 md:p-6">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-3 mb-6">
           
-          <div className="flex items-center gap-4 ml-10">
+          <div className="flex items-center gap-4 ml-0 md:ml-10">
 
 {!isInstalled && (
 <button
   onClick={installApp}
-  className="px-5 py-1 rounded-full text-green-400 text-sm hover:bg-green-500/10"
+  className="px-3 py-1 rounded-full text-green-400 text-sm hover:bg-green-500/10 whitespace-nowrap"
 >
   📱 Install App
 </button>
@@ -684,21 +684,21 @@ Tone:
                   localStorage.removeItem('history');
                   router.push('/');
                 }}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition"
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition"
               >
                 Logout
               </button>
             ) : (
-              <div className="flex gap-3">
+              <div className="flex gap-2">
                 <button
                   onClick={() => router.push('/login')}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold transition"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 md:px-4 rounded-lg font-bold transition"
                 >
                   Login
                 </button>
                 <button
                   onClick={() => router.push('/login')}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold transition"
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold transition"
                 >
                   Sign Up
                 </button>
@@ -708,7 +708,7 @@ Tone:
         </div>
 
         <div className="bg-gradient-to-r from-[#1E1B4B] to-[#121829] rounded-xl p-6 mb-8 border border-[#1E293B]">
-          <div className="flex items-center gap-4">
+         <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
             <Image
              src="/logo.png"
               alt="ReContent"
@@ -745,7 +745,7 @@ Tone:
                 if (e.target.value.length <= 5000) setInput(e.target.value);
               }}
               placeholder="Paste any content here..." 
-              className="w-full h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 text-gray-200 focus:outline-none focus:ring-1 focus:ring-[#4F46E5]/50 resize-none"
+              className="w-full h-48 md:h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 text-gray-200 focus:outline-none focus:ring-1 focus:ring-[#4F46E5]/50 resize-none"
             ></textarea>
             <div className="mt-4">
               {!loading && (
@@ -761,12 +761,12 @@ Tone:
           </div>
 
           <div className="bg-[#121829] rounded-xl p-6 border border-[#1E293B]">
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex flex-wrap items-center gap-3 mb-4">
               <span className="w-8 h-8 rounded-full bg-[#7C3AED]/20 text-[#7C3AED] flex items-center justify-center font-bold">2</span>
               <h3 className="text-lg font-semibold">Output</h3>
             </div>
             {loading ? (
-              <div className="w-full h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 flex flex-col items-center justify-center text-center">
+              <div className="w-full h-48 md:h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 flex flex-col items-center justify-center text-center">
                 <div className="animate-spin h-10 w-10 rounded-full border-4 border-[#7C3AED] border-t-transparent mb-3"></div>
                 <span>Generating Content...</span>
                 <button
@@ -777,7 +777,7 @@ Tone:
                 </button>
               </div>
           ) : !output ? (
-  <div className="w-full h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 text-gray-400">
+  <div className="w-full h-48 md:h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 text-gray-400">
     <div className="font-semibold mb-3">
       Example Output
     </div>
@@ -795,7 +795,7 @@ Tone:
   <textarea
     value={output}
     readOnly
-    className="w-full h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 text-gray-200 focus:outline-none resize-none"
+    className="w-full h-48 md:h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 text-gray-200 focus:outline-none resize-none"
   />
 )}
             <div className="grid grid-cols-3 gap-3 mt-6">
@@ -900,7 +900,7 @@ Tone:
         <footer className="mt-10 pt-6 border-t border-[#1E293B] text-sm text-gray-500">
           <div className="flex justify-between items-center">
             <p>&copy; 2026 ReContent. All rights reserved.</p>
-            <div className="flex gap-6">
+            <div className="flex flex-wrap justify-center gap-4">
               <a href="/privacy" className="hover:text-gray-300">Privacy</a>
               <a href="/terms" className="hover:text-gray-300">Terms</a>
               <a href="/refund" className="hover:text-gray-300">Refund</a>
