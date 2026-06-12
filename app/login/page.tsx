@@ -66,6 +66,7 @@ return deviceId;
 };
 
 const signUp = async () => {
+console.log("SIGNUP CLICKED");
 if (!email || !password) {
 setErrorMsg('Please enter your email and password.');
 return;
