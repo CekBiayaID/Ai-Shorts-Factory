@@ -31,9 +31,8 @@ const { data, error } = await supabase.auth.signInWithPassword({
 console.log("LOGIN DATA:", data);
 console.log("LOGIN ERROR:", error);
 
-setLoading(false);
-
 if (error) {
+  setLoading(false);
   setErrorMsg("Incorrect email or password");
   return;
 }
@@ -42,10 +41,54 @@ const {
   data: { session },
 } = await supabase.auth.getSession();
 
+if (!session?.user) {
+  setLoading(false);
+  setErrorMsg("Session not found.");
+  return;
+}
+
 console.log('SESSION:', session);
 
+const { data: profile } = await supabase
+  .from("profiles")
+  .select("device_id")
+  .eq("id", session.user.id)
+  .single();
+
+const deviceId = getDeviceId();
+
+if (profile?.device_id) {
+  if (profile.device_id !== deviceId) {
+    await supabase.auth.signOut();
+setLoading(false);
+    setErrorMsg(
+      "This account is already being used on another device."
+    );
+
+    return;
+  }
+} else {
+  await supabase
+    .from("profiles")
+    .update({
+      device_id: deviceId,
+    })
+    .eq("id", session.user.id);
+}
+setLoading(false);
 router.push('/');
 
+};
+
+const getDeviceId = () => {
+let deviceId = localStorage.getItem("device_id");
+
+if (!deviceId) {
+deviceId = crypto.randomUUID();
+localStorage.setItem("device_id", deviceId);
+}
+
+return deviceId;
 };
 
 const signUp = async () => {
@@ -53,13 +96,6 @@ if (!email || !password) {
 setErrorMsg('Please enter your email and password.');
 return;
 }
-
-setLoading(true);
-
-const { error } = await supabase.auth.signUp({
-  email,
-  password,
-});
 
 const blockedDomains = [
   "mailinator.com",
@@ -83,18 +119,24 @@ const blockedDomains = [
 const domain = email.split("@")[1]?.toLowerCase();
 
 if (blockedDomains.includes(domain)) {
-  setErrorMsg("Temporary email addresses are not allowed.");
-  return;
+setErrorMsg("Temporary email addresses are not allowed.");
+return;
 }
 
-setLoading(false);
+setLoading(true);
+
+const { error } = await supabase.auth.signUp({
+email,
+password,
+});
 
 if (error) {
+  setLoading(false);
   setErrorMsg('❌ Unable to create account');
   console.error(error);
   return;
 }
-
+setLoading(false);
 setErrorMsg('✅ Account created successfully! Please check your email.');
 
 };
