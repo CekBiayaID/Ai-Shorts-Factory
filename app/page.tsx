@@ -402,8 +402,7 @@ useEffect(() => {
           )}
           <button
            onClick={() => setSidebarOpen(true)}
-            className="fixed top-4 left-3 z-50 text-3xl md:text-2xl bg-[#121829] px-3 py-1 rounded-lg md:px-2 md:py-0"
-            >
+            className="fixed top-4 left-3 z-50 text-2xl bg-[#121829] px-2 py-1 rounded-lg">
               ☰
             </button>            
       {/* Sidebar Navigation */}
