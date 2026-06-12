@@ -402,7 +402,7 @@ useEffect(() => {
           )}
           <button
            onClick={() => setSidebarOpen(true)}
-            className="fixed top-4 left-4 z-50 text-2xl bg-[#121829] px-2 rounded"
+            className="fixed top-4 left-3 z-50 text-2xl bg-[#121829] px-3 py-1 rounded-lg md:px-2 md:py-0"
             >
               ☰
             </button>            
@@ -637,7 +637,7 @@ Tone:
       </aside>
 
       <main className="flex-1 overflow-y-auto p-4 md:p-6">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-3 mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 mt-12 md:mt-0">
           
           <div className="flex items-center gap-4 ml-0 md:ml-10">
 
@@ -718,7 +718,7 @@ Tone:
             />
             <div>
               
-              <h2 className="text-2xl font-bold">Welcome to RepurposeContent</h2>
+              <h2 className="text-2xl md:text-2xl font-bold">Welcome to RepurposeContent</h2>
               <p className="text-gray-300">Create Viral Content For Every Platform With One Click.
                </p>
              <p className="text-gray-300">
@@ -731,10 +731,10 @@ Tone:
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="bg-[#121829] rounded-xl p-6 border border-[#1E293B]">
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex flex-wrap items-center gap-3 mb-4">
               <span className="w-8 h-8 rounded-full bg-[#4F46E5]/20 text-[#4F46E5] flex items-center justify-center font-bold">1</span>
               <h3 className="text-lg font-semibold">Input Content</h3>
-              <span className="text-xs bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-white px-3 py-1 rounded-full border border-cyan-400/30">
+              <span className="text-[-10px] md:text-xs bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-white px-3 py-1 rounded-full border border-cyan-400/30">
                🌍 Multi-Language
               </span>
             </div>
@@ -798,7 +798,7 @@ Tone:
     className="w-full h-48 md:h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 text-gray-200 focus:outline-none resize-none"
   />
 )}
-            <div className="grid grid-cols-3 gap-3 mt-6">
+            <div className="grid grid-cols-3 gap-2 mt-6">
               <button 
                 onClick={downloadTxt}
                 disabled={!output.trim()}
@@ -834,7 +834,7 @@ Tone:
           </div>
 
           <div className="bg-[#121829] rounded-xl p-6 border border-[#1E293B]">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
               <div className="flex items-center gap-3">
                 <span className="w-8 h-8 rounded-full bg-[#DB2777]/20 text-[#DB2777] flex items-center justify-center font-bold">3</span>
                 <h3 className="text-lg font-semibold">History ({history.length})</h3>
@@ -899,8 +899,9 @@ Tone:
 
         <footer className="mt-10 pt-6 border-t border-[#1E293B] text-sm text-gray-500">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center">
-            <p>&copy; 2026 ReContent. All rights reserved.</p>
-            <div className="flex flex-wrap justify-center gap-4">
+            <p className="text-center text-xs md:text-sm">
+            &copy; 2026 ReContent. All rights reserved.</p>
+            <div className="flex flex-wrap justify-center gap-2 md:gap-4">
               <a href="/privacy" className="hover:text-gray-300">Privacy</a>
               <a href="/terms" className="hover:text-gray-300">Terms</a>
               <a href="/refund" className="hover:text-gray-300">Refund</a>
