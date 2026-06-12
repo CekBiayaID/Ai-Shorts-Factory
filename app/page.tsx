@@ -137,9 +137,6 @@ if (profile.last_reset !== today) {
         return;
       }
 
-      const now = new Date();
-      const today = new Date().toISOString().split("T")[0];
-
       setUsedToday(profile.daily_used || 0);
 
 const currentPlan =
@@ -377,12 +374,6 @@ useEffect(() => {
     });
     const blob = await Packer.toBlob(doc);
     saveAs(blob, 're-content-output.docx');
-  };
-
-  const clearInput = () => setInput('');
-  const clearOutput = () => {
-    setOutput('');
-    localStorage.removeItem('lastOutput');
   };
 
   const clearHistory = async () => {
@@ -755,19 +746,16 @@ Tone:
               placeholder="Paste any content here..." 
               className="w-full h-64 bg-[#0B101E] border border-[#1E293B] rounded-lg p-4 text-gray-200 focus:outline-none focus:ring-1 focus:ring-[#4F46E5]/50 resize-none"
             ></textarea>
-            <div className="flex gap-3 mt-6">
-              <button 
-                onClick={clearInput}
-                className="flex-1 bg-gray-800 hover:bg-gray-700 px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 transition text-gray-300"
-              >
-                <i className="fa fa-trash"></i> Clear Input
-              </button>
-              <button 
-                onClick={clearOutput}
-                className="flex-1 bg-gray-800 hover:bg-gray-700 px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 transition text-gray-300"
-              >
-                <i className="fa fa-times"></i> Clear Output
-              </button>
+            <div className="mt-4">
+              {!loading && (
+                <button
+                  onClick={generate}
+                  disabled={usedToday >= dailyLimit || !input.trim()}
+                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50 text-white font-bold py-2.5 rounded-lg transition"
+                >
+                  {usedToday >= dailyLimit ? "Daily Limit Reached" : "Repurpose Content"}
+                </button>
+              )}
             </div>
           </div>
 
@@ -841,17 +829,6 @@ Tone:
               >
                 <i className="fa fa-download"></i> {plan === "PRO" ? "PDF" : "🔒 PDF"}
               </button>
-            </div>
-            <div className="mt-4">
-              {!loading && (
-                <button
-                  onClick={generate}
-                  disabled={usedToday >= dailyLimit || !input.trim()}
-                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50 text-white font-bold py-2.5 rounded-lg transition"
-                >
-                  {usedToday >= dailyLimit ? "Daily Limit Reached" : "Repurpose Content"}
-                </button>
-              )}
             </div>
           </div>
 
