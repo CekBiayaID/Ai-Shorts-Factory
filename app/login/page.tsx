@@ -28,9 +28,6 @@ const { data, error } = await supabase.auth.signInWithPassword({
   password,
 });
 
-console.log("LOGIN DATA:", data);
-console.log("LOGIN ERROR:", error);
-
 if (error) {
   setLoading(false);
   setErrorMsg("Incorrect email or password");
@@ -47,7 +44,45 @@ if (!session?.user) {
   return;
 }
 
-console.log('SESSION:', session);
+const deviceId = getDeviceId();
+
+const { data: profile } = await supabase
+  .from("profiles")
+  .select("device_id")
+  .eq("id", session.user.id)
+  .single();
+
+if (!profile?.device_id) {
+
+ const { data: canCreate, error: rpcError } =
+  await supabase.rpc(
+    "check_device_limit",
+    {
+      p_device_id: deviceId,
+    }
+  );
+
+if (rpcError) {
+  setLoading(false);
+  setErrorMsg("Failed checking device limit.");
+  return;
+}
+
+if (!canCreate) {
+  setLoading(false);
+  setErrorMsg(
+    "Maximum 3 accounts allowed on this device."
+  );
+  return;
+}
+
+  await supabase
+    .from("profiles")
+    .update({
+      device_id: deviceId,
+    })
+    .eq("id", session.user.id);
+}
 
 setLoading(false);
 router.push('/');
@@ -66,7 +101,7 @@ return deviceId;
 };
 
 const signUp = async () => {
-console.log("SIGNUP CLICKED");
+console.log("SIGNUP CLICKED")
 if (!email || !password) {
 setErrorMsg('Please enter your email and password.');
 return;
@@ -100,15 +135,23 @@ return;
 
 const deviceId = getDeviceId();
 
-const { count } = await supabase
-  .from("profiles")
-  .select("*", {
-    count: "exact",
-    head: true,
-  })
-  .eq("device_id", deviceId);
+const { data: canCreate, error: rpcError } =
+  await supabase.rpc(
+    "check_device_limit",
+    {
+      p_device_id: deviceId,
+    }
+  );
 
-if ((count ?? 0) >= 3) {
+console.log("CAN CREATE =", canCreate);
+
+if (rpcError) {
+  console.error(rpcError);
+  setErrorMsg("Failed checking device limit.");
+  return;
+}
+
+if (!canCreate) {
   setErrorMsg(
     "Maximum 3 accounts allowed on this device."
   );
@@ -117,9 +160,9 @@ if ((count ?? 0) >= 3) {
 
 setLoading(true);
 
-const { error } = await supabase.auth.signUp({
-email,
-password,
+const { data, error } = await supabase.auth.signUp({
+  email,
+  password,
 });
 
 if (error) {
@@ -129,17 +172,16 @@ if (error) {
   return;
 }
 
-const {
-  data: { user },
-} = await supabase.auth.getUser();
-
-if (user) {
+if (data.user) {
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  const result =
   await supabase
     .from("profiles")
     .update({
       device_id: deviceId,
     })
-    .eq("id", user.id);
+    .eq("id", data.user.id);
+    console.log(result);
 }
 
 setLoading(false);
