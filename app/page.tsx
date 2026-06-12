@@ -402,7 +402,7 @@ useEffect(() => {
           )}
           <button
            onClick={() => setSidebarOpen(true)}
-            className="fixed top-4 left-3 z-50 text-2xl bg-[#121829] px-3 py-1 rounded-lg md:px-2 md:py-0"
+            className="fixed top-4 left-3 z-50 text-3xl md:text-2xl bg-[#121829] px-3 py-1 rounded-lg md:px-2 md:py-0"
             >
               ☰
             </button>            
@@ -692,13 +692,13 @@ Tone:
               <div className="flex gap-2">
                 <button
                   onClick={() => router.push('/login')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 md:px-4 rounded-lg font-bold transition"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 md:px-4 md:py-2 rounded-lg font-bold transition"
                 >
                   Login
                 </button>
                 <button
                   onClick={() => router.push('/login')}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold transition"
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-3 md:px-4 md:py-2 rounded-lg font-bold transition"
                 >
                   Sign Up
                 </button>
@@ -707,7 +707,7 @@ Tone:
           </div>
         </div>
 
-        <div className="bg-gradient-to-r from-[#1E1B4B] to-[#121829] rounded-xl p-6 mb-8 border border-[#1E293B]">
+        <div className="bg-gradient-to-r from-[#1E1B4B] to-[#121829] rounded-xl p-4 md:p-6 mb-8 border border-[#1E293B]">
          <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
             <Image
              src="/logo.png"
@@ -718,7 +718,7 @@ Tone:
             />
             <div>
               
-              <h2 className="text-2xl md:text-2xl font-bold">Welcome to RepurposeContent</h2>
+              <h2 className="text-xl md:text-2xl font-bold">Welcome to RepurposeContent</h2>
               <p className="text-gray-300">Create Viral Content For Every Platform With One Click.
                </p>
              <p className="text-gray-300">
@@ -733,8 +733,8 @@ Tone:
 <div className="bg-[#121829] rounded-xl p-6 border border-[#1E293B]">
 <div className="flex items-center justify-between mb-4">
 <span className="w-8 h-8 rounded-full bg-[#4F46E5]/20 text-[#4F46E5] flex items-center justify-center font-bold">1</span>
-<h3 className="text-lg font-semibold">Input Content</h3>
-<span className="text-[-10px] md:text-xs bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-white px-3 py-1 rounded-full border border-cyan-400/30">
+<h3 className="text-base md:text-lg font-semibold">Input Content</h3>
+<span className="text-xs md:text-xs bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-white px-2 py-1 rounded-full border border-cyan-400/30 whitespace-nowrap">
                🌍 Multi-Language
               </span>
             </div>
@@ -856,7 +856,7 @@ Tone:
               />
               <i className="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
             </div>
-            <div className="w-full h-40 md:h-52 bg-[#0B101E] border border-[#1E293B] rounded-lg p-3 overflow-y-auto">
+            <div className="w-full h-32 md:h-52 bg-[#0B101E] border border-[#1E293B] rounded-lg p-3 overflow-y-auto">
               {filteredHistory.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center">
                   <div className="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center mb-3">
@@ -897,7 +897,7 @@ Tone:
           </div>
         </div>
 
-        <footer className="mt-10 pt-6 border-t border-[#1E293B] text-sm text-gray-500">
+        <footer className="mt-10 pt-6 border-t border-[#1E293B] text-xs md:text-sm text-gray-500">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center">
             <p className="text-center text-xs md:text-sm">
             &copy; 2026 ReContent. All rights reserved.</p>
