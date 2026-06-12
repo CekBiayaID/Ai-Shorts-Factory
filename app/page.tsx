@@ -729,12 +729,12 @@ Tone:
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="bg-[#121829] rounded-xl p-6 border border-[#1E293B]">
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span className="w-8 h-8 rounded-full bg-[#4F46E5]/20 text-[#4F46E5] flex items-center justify-center font-bold">1</span>
-              <h3 className="text-lg font-semibold">Input Content</h3>
-              <span className="text-[-10px] md:text-xs bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-white px-3 py-1 rounded-full border border-cyan-400/30">
+<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div className="bg-[#121829] rounded-xl p-6 border border-[#1E293B]">
+<div className="flex items-center justify-between mb-4">
+<span className="w-8 h-8 rounded-full bg-[#4F46E5]/20 text-[#4F46E5] flex items-center justify-center font-bold">1</span>
+<h3 className="text-lg font-semibold">Input Content</h3>
+<span className="text-[-10px] md:text-xs bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-white px-3 py-1 rounded-full border border-cyan-400/30">
                🌍 Multi-Language
               </span>
             </div>
