@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 export default function LoginPage() {
 const router = useRouter();
@@ -44,7 +45,7 @@ if (!session?.user) {
   return;
 }
 
-const deviceId = getDeviceId();
+const deviceId = await getDeviceId();
 
 const { data: profile } = await supabase
   .from("profiles")
@@ -53,8 +54,6 @@ const { data: profile } = await supabase
   .single();
 
 if (!profile?.device_id) {
-
-const deviceId = getDeviceId();
 
  const { data: canCreate, error: rpcError } =
   await supabase.rpc(
@@ -91,15 +90,11 @@ router.push('/');
 
 };
 
-const getDeviceId = () => {
-let deviceId = localStorage.getItem("device_id");
+const getDeviceId = async () => {
+  const fp = await FingerprintJS.load();
+  const result = await fp.get();
 
-if (!deviceId) {
-deviceId = crypto.randomUUID();
-localStorage.setItem("device_id", deviceId);
-}
-
-return deviceId;
+  return result.visitorId;
 };
 
 const signUp = async () => {
@@ -135,7 +130,7 @@ setErrorMsg("Temporary email addresses are not allowed.");
 return;
 }
 
-const deviceId = getDeviceId();
+const deviceId = await getDeviceId();
 
 const { data: canCreate, error: rpcError } =
   await supabase.rpc(
