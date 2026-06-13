@@ -54,6 +54,8 @@ const { data: profile } = await supabase
 
 if (!profile?.device_id) {
 
+const deviceId = getDeviceId();
+
  const { data: canCreate, error: rpcError } =
   await supabase.rpc(
     "check_device_limit",
@@ -163,6 +165,11 @@ setLoading(true);
 const { data, error } = await supabase.auth.signUp({
   email,
   password,
+  options: {
+    data: {
+      device_id: deviceId,
+    },
+  },
 });
 
 if (error) {
@@ -170,18 +177,6 @@ if (error) {
   setErrorMsg(error.message);
   console.error(error);
   return;
-}
-
-if (data.user) {
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  const result =
-  await supabase
-    .from("profiles")
-    .update({
-      device_id: deviceId,
-    })
-    .eq("id", data.user.id);
-    console.log(result);
 }
 
 setLoading(false);
