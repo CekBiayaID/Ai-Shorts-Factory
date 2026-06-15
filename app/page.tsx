@@ -37,6 +37,8 @@ export default function HomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   // --- DAILY LIMIT & TIMER SYSTEM ---
   const getNextResetTime = useCallback(() => {
@@ -126,6 +128,15 @@ if (profile.last_reset !== today) {
       setIsLoggedIn(!!session);
 
       if (!session?.user) return;
+
+      setUserEmail(session.user.email || "");
+
+setAvatarUrl(
+  session.user.user_metadata?.avatar_url ||
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(
+    session.user.email || "User"
+  )}`
+);
 
       const { data: profile, error } = await supabase
         .from("profiles")
@@ -426,9 +437,6 @@ useEffect(() => {
                 className="rounded-lg"
               />
             <span className="text-base font-bold">ReContent</span>
-            <span className="bg-[#4F46E5]/20 text-[#4F46E5] px-2 py-0.5 rounded text-xs font-semibold">
-              {plan === "PRO" ? "PRO" : "FREE"}
-            </span>
           </div>
         </div>
 
@@ -668,26 +676,52 @@ Tone:
             )}
 
             {isLoggedIn ? (
-              <button
-                onClick={async () => {
-                  await supabase.auth.signOut();
-                  setIsLoggedIn(false);
-                  setInput('');
-                  setOutput('');
-                  setHistory([]);
-                  setPlan('FREE');
-                  setUsedToday(0);
-                  setExpiresAt('');
-                  localStorage.removeItem('lastInput');
-                  localStorage.removeItem('lastOutput');
-                  localStorage.removeItem('history');
-                  router.push('/');
-                }}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition"
-              >
-                Logout
-              </button>
-            ) : (
+  <div className="flex items-center gap-3">
+
+    <div className="flex items-center gap-2 bg-[#121829] px-3 py-2 rounded-lg border border-[#1E293B]">
+
+      <img
+        src={avatarUrl}
+        alt="avatar"
+        className="w-10 h-10 rounded-full"
+      />
+
+      <div className="hidden md:block">
+        <p className="text-sm font-semibold text-white">
+          {userEmail}
+        </p>
+
+        {plan === "FREE" && (
+    <p className="text-xs text-gray-400">
+      FREE
+    </p>
+  )}
+      </div>
+
+    </div>
+
+    <button
+      onClick={async () => {
+        await supabase.auth.signOut();
+        setIsLoggedIn(false);
+        setInput('');
+        setOutput('');
+        setHistory([]);
+        setPlan('FREE');
+        setUsedToday(0);
+        setExpiresAt('');
+        localStorage.removeItem('lastInput');
+        localStorage.removeItem('lastOutput');
+        localStorage.removeItem('history');
+        router.push('/');
+      }}
+      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition"
+    >
+      Logout
+    </button>
+
+  </div>
+) : (
               <div className="flex gap-2">
                 <button
                   onClick={() => router.push('/login')}
